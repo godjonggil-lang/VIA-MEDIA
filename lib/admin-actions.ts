@@ -93,9 +93,11 @@ export async function saveArticle(formData: FormData) {
   } as object
 
   if (articleId) {
-    await supabase.from('articles').update(payload).eq('id', articleId)
+    const { error } = await supabase.from('articles').update(payload).eq('id', articleId)
+    if (error) redirect(`/admin/agenda/${agendaId}?error=1`)
   } else {
-    await supabase.from('articles').insert(payload)
+    const { error } = await supabase.from('articles').insert(payload)
+    if (error) redirect(`/admin/agenda/${agendaId}?error=1`)
   }
 
   revalidatePath(`/admin/agenda/${agendaId}`)

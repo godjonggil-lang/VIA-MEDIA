@@ -1,7 +1,25 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useRef } from 'react'
 import { siteConfig } from '@/lib/data'
 
 export default function Footer() {
+  const router = useRouter()
+  const clickCount = useRef(0)
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function handleSecretClick() {
+    clickCount.current += 1
+    if (clickTimer.current) clearTimeout(clickTimer.current)
+    if (clickCount.current >= 5) {
+      clickCount.current = 0
+      router.push('/admin/login')
+    } else {
+      clickTimer.current = setTimeout(() => { clickCount.current = 0 }, 2000)
+    }
+  }
   return (
     <footer className="border-t border-gray-200 bg-white mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -87,7 +105,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="font-sans text-xs text-gray-400">
-            © {new Date().getFullYear()} VIA MEDIA. All rights reserved.
+            <span onClick={handleSecretClick} className="cursor-default select-none">©</span> {new Date().getFullYear()} VIA MEDIA. All rights reserved.
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> </span>무단 전재·재배포 금지.
           </p>

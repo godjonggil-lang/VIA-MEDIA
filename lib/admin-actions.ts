@@ -1,0 +1,162 @@
+'use server'
+
+import { cookies } from 'next/headers'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { createAdminClient } from './supabase-admin'
+import type { Category, Perspective, Author } from '@/types'
+
+async function verifyAdmin() {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('admin-token')?.value
+  if (!token || token !== process.env.ADMIN_PASSWORD) {
+    redirect('/admin/login')
+  }
+}
+
+export async function adminLogin(formData: FormData) {
+  const password = formData.get('password') as string
+  if (password === process.env.ADMIN_PASSWORD) {
+    const cookieStore = await cookies()
+    cookieStore.set('admin-token', password, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    })
+    redirect('/admin/dashboard')
+  }
+  redirect('/admin/login?error=1')
+}
+
+export async function adminLogout() {
+  const cookieStore = await cookies()
+  cookieStore.delete('admin-token')
+  redirect('/admin/login')
+}
+
+export async function createAgenda(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+
+  const { data, error } = await supabase
+    .from('agendas')
+    .insert({
+      title: formData.get('title') as string,
+      category: formData.get('category') as Category,
+      description: (formData.get('description') as string) || null,
+      status: 'draft',
+    } as object)
+    .select()
+    .single()
+
+  if (error || !data) redirect('/admin/dashboard?error=1')
+
+  revalidatePath('/admin/dashboard')
+  redirect(`/admin/agenda/${(data as { id: string }).id}`)
+}
+
+export async function updateAgenda(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const id = formData.get('id') as string
+
+  await supabase
+    .from('agendas')
+    .update({
+      title: formData.get('title') as string,
+      category: formData.get('category') as Category,
+      description: (formData.get('description') as string) || null,
+    } as object)
+    .eq('id', id)
+
+  revalidatePath('/admin/dashboard')
+  redirect(`/admin/agenda/${id}?saved=1`)
+}
+
+export async function saveArticle(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const articleId = formData.get('articleId') as string
+  const agendaId = formData.get('agendaId') as string
+
+  const payload = {
+    agenda_id: agendaId,
+    slug: formData.get('slug') as string,
+    title: formData.get('title') as string,
+    summary: (formData.get('summary') as string) || null,
+    content: (formData.get('content') as string) || null,
+    perspective: formData.get('perspective') as Perspective,
+    author: formData.get('author') as Author,
+    status: 'draft',
+  } as object
+
+  if (articleId) {
+    await supabase.from('articles').update(payload).eq('id', articleId)
+  } else {
+    await supabase.from('articles').insert(payload)
+  }
+
+  revalidatePath(`/admin/agenda/${agendaId}`)
+  revalidatePath('/')
+  revalidatePath('/agenda')
+  redirect(`/admin/agenda/${agendaId}?saved=1`)
+}
+
+export async function publishAgenda(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const id = formData.get('id') as string
+  const now = new Date().toISOString()
+
+  await Promise.all([
+    supabase
+      .from('agendas')
+      .update({ status: 'published', published_at: now } as object)
+      .eq('id', id),
+    supabase
+      .from('articles')
+      .update({ status: 'published', published_at: now } as object)
+      .eq('agenda_id', id),
+  ])
+
+  revalidatePath('/')
+  revalidatePath('/agenda')
+  revalidatePath('/admin/dashboard')
+  redirect(`/admin/agenda/${id}?published=1`)
+}
+
+export async function unpublishAgenda(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const id = formData.get('id') as string
+
+  await Promise.all([
+    supabase
+      .from('agendas')
+      .update({ status: 'draft', published_at: null } as object)
+      .eq('id', id),
+    supabase
+      .from('articles')
+      .update({ status: 'draft', published_at: null } as object)
+      .eq('agenda_id', id),
+  ])
+
+  revalidatePath('/')
+  revalidatePath('/agenda')
+  revalidatePath('/admin/dashboard')
+  redirect(`/admin/agenda/${id}`)
+}
+
+export async function deleteArticle(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const articleId = formData.get('articleId') as string
+  const agendaId = formData.get('agendaId') as string
+
+  await supabase.from('articles').delete().eq('id', articleId)
+
+  revalidatePath(`/admin/agenda/${agendaId}`)
+  redirect(`/admin/agenda/${agendaId}`)
+}

@@ -7,8 +7,8 @@ import { useState } from 'react'
 const navLinks = [
   { href: '/', label: '홈' },
   { href: '/agenda', label: '아젠다' },
-  { href: '/article/medical-school-progressive', label: '진보의 시각' },
-  { href: '/article/medical-school-conservative', label: '보수의 시각' },
+  { href: '/agenda', label: '진보의 시각' },
+  { href: '/agenda', label: '보수의 시각' },
   { href: '/subscribe', label: '구독·후원' },
   { href: '/about', label: '소개' },
 ]

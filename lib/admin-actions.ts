@@ -75,6 +75,52 @@ export async function updateAgenda(formData: FormData) {
   redirect(`/admin/agenda/${id}?saved=1`)
 }
 
+export async function saveAll(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const agendaId = formData.get('agendaId') as string
+
+  // 1. 아젠다 정보 저장
+  await supabase
+    .from('agendas')
+    .update({
+      title: formData.get('agendaTitle') as string,
+      category: formData.get('agendaCategory') as Category,
+      description: (formData.get('agendaDescription') as string) || null,
+    } as object)
+    .eq('id', agendaId)
+
+  // 2. 진보·보수 기사 저장 (있으면 update, 없으면 insert)
+  for (const perspective of ['progressive', 'conservative'] as Perspective[]) {
+    const articleId = formData.get(`${perspective}_articleId`) as string
+    const slug = formData.get(`${perspective}_slug`) as string
+    const title = formData.get(`${perspective}_title`) as string
+    if (!slug || !title) continue
+
+    const payload = {
+      agenda_id: agendaId,
+      slug,
+      title,
+      summary: (formData.get(`${perspective}_summary`) as string) || null,
+      content: (formData.get(`${perspective}_content`) as string) || null,
+      perspective,
+      author: (formData.get(`${perspective}_author`) as Author) || 'publisher',
+      status: 'draft',
+    } as object
+
+    if (articleId) {
+      await supabase.from('articles').update(payload).eq('id', articleId)
+    } else {
+      await supabase.from('articles').insert(payload)
+    }
+  }
+
+  revalidatePath(`/admin/agenda/${agendaId}`)
+  revalidatePath('/')
+  revalidatePath('/agenda')
+  redirect(`/admin/agenda/${agendaId}?saved=1`)
+}
+
 export async function saveArticle(formData: FormData) {
   await verifyAdmin()
   const supabase = createAdminClient()

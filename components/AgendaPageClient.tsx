@@ -10,14 +10,34 @@ const CATEGORIES: (Category | '전체')[] = ['전체', '정치', '경제', '사�
 export default function AgendaPageClient({
   agendas,
   articles,
+  initialView,
 }: {
   agendas: Agenda[]
   articles: Article[]
+  initialView?: 'progressive' | 'conservative' | null
 }) {
   const [activeCategory, setActiveCategory] = useState<Category | '전체'>('전체')
 
   const filteredAgendas =
     activeCategory === '전체' ? agendas : agendas.filter(a => a.category === activeCategory)
+
+  // 관점 필터가 있으면 해당 기사만 표시
+  if (initialView) {
+    const viewArticles = articles.filter(a => a.perspective === initialView)
+    return (
+      <div className="space-y-6">
+        {viewArticles.length === 0 ? (
+          <p className="font-sans text-gray-400 text-center py-20">아직 게시된 기사가 없습니다.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {viewArticles.map(article => (
+              <ArticleCard key={article.slug} article={article} />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <>

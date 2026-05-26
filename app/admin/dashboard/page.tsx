@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getAllAgendas, getMaintenanceMode } from '@/lib/admin-queries'
 import { setMaintenanceMode } from '@/lib/admin-actions'
+import DeleteAgendaButton from '@/components/DeleteAgendaButton'
 
 export default async function DashboardPage({
   searchParams,
@@ -110,6 +111,9 @@ export default async function DashboardPage({
                   </div>
                   <span className="font-sans text-xs text-gray-400 group-hover:text-gray-700">
                     편집 →
+                  </span>
+                  <span onClick={e => e.preventDefault()}>
+                    <DeleteAgendaButton agendaId={agenda.id} agendaTitle={agenda.title} />
                   </span>
                 </div>
               </Link>

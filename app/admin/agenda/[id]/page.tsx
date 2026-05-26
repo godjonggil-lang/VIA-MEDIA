@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getAdminAgendaById } from '@/lib/admin-queries'
 import { saveAll, publishAgenda, unpublishAgenda, deleteArticle } from '@/lib/admin-actions'
 import type { DbArticle } from '@/lib/database.types'
+import DeleteAgendaButton from '@/components/DeleteAgendaButton'
 
 const CATEGORIES = ['정치', '경제', '사회', '국제'] as const
 
@@ -147,6 +148,7 @@ export default async function AgendaEditorPage({
           <Link href="/admin/dashboard" className="font-sans text-sm text-gray-400 hover:text-gray-700">
             ← 대시보드
           </Link>
+          <DeleteAgendaButton agendaId={agenda.id} agendaTitle={agenda.title} />
           <span className="text-gray-300">/</span>
           <h1 className="font-serif font-bold text-xl text-gray-900">{agenda.title}</h1>
           <span className={`font-sans text-xs px-2 py-0.5 ${isPublished ? 'bg-green-100 text-green-700' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>

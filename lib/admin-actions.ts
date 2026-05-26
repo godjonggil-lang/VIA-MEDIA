@@ -237,6 +237,21 @@ export async function setMaintenanceMode(formData: FormData) {
   redirect('/admin/dashboard')
 }
 
+export async function deleteAgenda(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const id = formData.get('id') as string
+
+  // 기사 먼저 삭제 후 아젠다 삭제
+  await supabase.from('articles').delete().eq('agenda_id', id)
+  await supabase.from('agendas').delete().eq('id', id)
+
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/')
+  revalidatePath('/agenda')
+  redirect('/admin/dashboard')
+}
+
 export async function deleteArticle(formData: FormData) {
   await verifyAdmin()
   const supabase = createAdminClient()

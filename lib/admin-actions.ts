@@ -233,6 +233,8 @@ export async function setMaintenanceMode(formData: FormData) {
       { onConflict: 'key' }
     )
 
+  revalidatePath('/', 'layout')
+  revalidatePath('/agenda')
   revalidatePath('/admin/dashboard')
   redirect('/admin/dashboard')
 }

@@ -1,6 +1,16 @@
 import { createAdminClient } from './supabase-admin'
 import type { DbAgenda, DbArticle } from './database.types'
 
+export async function getMaintenanceMode(): Promise<boolean> {
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'maintenance_mode')
+    .maybeSingle()
+  return (data as { value: string } | null)?.value === 'true'
+}
+
 export type AdminAgenda = DbAgenda & { articles: DbArticle[] }
 
 export async function getAllAgendas(): Promise<AdminAgenda[]> {

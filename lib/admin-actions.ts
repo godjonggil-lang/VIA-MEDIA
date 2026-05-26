@@ -221,6 +221,22 @@ export async function unpublishAgenda(formData: FormData) {
   redirect(`/admin/agenda/${id}`)
 }
 
+export async function setMaintenanceMode(formData: FormData) {
+  await verifyAdmin()
+  const supabase = createAdminClient()
+  const enabled = formData.get('enabled') === 'true'
+
+  await supabase
+    .from('site_settings')
+    .upsert(
+      { key: 'maintenance_mode', value: enabled ? 'true' : 'false', updated_at: new Date().toISOString() },
+      { onConflict: 'key' }
+    )
+
+  revalidatePath('/admin/dashboard')
+  redirect('/admin/dashboard')
+}
+
 export async function deleteArticle(formData: FormData) {
   await verifyAdmin()
   const supabase = createAdminClient()

@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 export default function MaintenancePage() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] flex flex-col items-center justify-center px-6">
@@ -16,13 +14,13 @@ export default function MaintenancePage() {
         <div className="w-12 h-px bg-[#B22222] mx-auto" />
       </div>
 
-      {/* 관리자 비밀 링크 */}
-      <Link
+      {/* 관리자 비밀 링크 — 전체 페이지 이동으로 미들웨어 정상 통과 */}
+      <a
         href="/admin/login"
         className="fixed bottom-6 right-6 text-[10px] text-gray-300 hover:text-gray-500 transition-colors font-sans select-none"
       >
         ·
-      </Link>
+      </a>
     </div>
   )
 }

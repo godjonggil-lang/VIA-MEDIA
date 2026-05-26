@@ -15,7 +15,7 @@ export default function Footer() {
     if (clickTimer.current) clearTimeout(clickTimer.current)
     if (clickCount.current >= 5) {
       clickCount.current = 0
-      router.push('/admin/login')
+      window.location.href = '/admin/login'
     } else {
       clickTimer.current = setTimeout(() => { clickCount.current = 0 }, 2000)
     }

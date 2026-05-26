@@ -37,7 +37,7 @@ export async function proxy(request: NextRequest) {
   if (!isAdmin && !isMaintenance) {
     const maintenance = await isMaintenanceMode()
     if (maintenance) {
-      return NextResponse.redirect(new URL('/maintenance', request.url))
+      return NextResponse.redirect(new URL('/maintenance', request.url), 302)
     }
   }
 

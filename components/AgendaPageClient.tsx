@@ -42,16 +42,43 @@ export default function AgendaPageClient({
     return categoryOk && monthOk
   })
 
-  // 관점 필터가 있으면 해당 기사만 표시
+  // 관점 필터가 있으면 해당 기사만 표시 (연도·월 필터 포함)
   if (initialView) {
     const viewArticles = articles.filter(a => a.perspective === initialView)
+    const viewMonths = ['전체', ...Array.from(
+      new Set(viewArticles.map(a => toYearMonth(a.publishedAt)))
+    ).sort((a, b) => b.localeCompare(a))]
+
+    const filteredViewArticles = activeMonth === '전체'
+      ? viewArticles
+      : viewArticles.filter(a => toYearMonth(a.publishedAt) === activeMonth)
+
     return (
       <div className="space-y-6">
-        {viewArticles.length === 0 ? (
+        {/* 연도·월 필터 */}
+        {viewMonths.length > 1 && (
+          <div className="flex gap-2 flex-wrap mb-6 border-b border-gray-200 pb-6">
+            {viewMonths.map(ym => (
+              <button
+                key={ym}
+                onClick={() => setActiveMonth(ym)}
+                className={`font-sans text-xs px-3 py-1.5 border transition-colors ${
+                  activeMonth === ym
+                    ? 'border-[#B22222] bg-[#B22222] text-white'
+                    : 'border-gray-200 text-gray-500 hover:border-gray-400'
+                }`}
+              >
+                {ym === '전체' ? '전체 기간' : formatYearMonth(ym)}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {filteredViewArticles.length === 0 ? (
           <p className="font-sans text-gray-400 text-center py-20">아직 게시된 기사가 없습니다.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {viewArticles.map(article => (
+            {filteredViewArticles.map(article => (
               <ArticleCard key={article.slug} article={article} />
             ))}
           </div>

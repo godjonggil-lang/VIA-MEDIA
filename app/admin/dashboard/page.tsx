@@ -79,12 +79,15 @@ export default async function DashboardPage({
             const isPublished = agenda.status === 'published'
 
             return (
-              <Link
+              <div
                 key={agenda.id}
-                href={`/admin/agenda/${agenda.id}`}
-                className="flex items-center justify-between bg-white border border-gray-200 px-5 py-4 hover:border-gray-400 transition-colors group"
+                className="flex items-center justify-between bg-white border border-gray-200 hover:border-gray-400 transition-colors group"
               >
-                <div className="flex items-center gap-4 min-w-0">
+                {/* 편집 링크 — 행 대부분 차지 */}
+                <Link
+                  href={`/admin/agenda/${agenda.id}`}
+                  className="flex items-center gap-4 min-w-0 flex-1 px-5 py-4"
+                >
                   <span
                     className={`font-sans text-xs px-2 py-0.5 flex-shrink-0 ${
                       isPublished
@@ -98,25 +101,26 @@ export default async function DashboardPage({
                     {agenda.category}
                   </span>
                   <span className="font-sans font-medium text-gray-900 truncate">{agenda.title}</span>
-                </div>
-
-                <div className="flex items-center gap-4 flex-shrink-0">
-                  <div className="flex gap-2">
-                    <span className={`font-sans text-xs ${hasProgressive ? 'text-green-600' : 'text-red-400'}`}>
-                      진보 {hasProgressive ? '✓' : '✕'}
-                    </span>
-                    <span className={`font-sans text-xs ${hasConservative ? 'text-green-600' : 'text-red-400'}`}>
-                      보수 {hasConservative ? '✓' : '✕'}
+                  <div className="ml-auto flex items-center gap-4 flex-shrink-0">
+                    <div className="flex gap-2">
+                      <span className={`font-sans text-xs ${hasProgressive ? 'text-green-600' : 'text-red-400'}`}>
+                        진보 {hasProgressive ? '✓' : '✕'}
+                      </span>
+                      <span className={`font-sans text-xs ${hasConservative ? 'text-green-600' : 'text-red-400'}`}>
+                        보수 {hasConservative ? '✓' : '✕'}
+                      </span>
+                    </div>
+                    <span className="font-sans text-xs text-gray-400 group-hover:text-gray-700">
+                      편집 →
                     </span>
                   </div>
-                  <span className="font-sans text-xs text-gray-400 group-hover:text-gray-700">
-                    편집 →
-                  </span>
-                  <span onClick={e => e.preventDefault()}>
-                    <DeleteAgendaButton agendaId={agenda.id} agendaTitle={agenda.title} />
-                  </span>
+                </Link>
+
+                {/* 삭제 버튼 — Link 바깥에 분리 */}
+                <div className="px-3 border-l border-gray-100">
+                  <DeleteAgendaButton agendaId={agenda.id} agendaTitle={agenda.title} />
                 </div>
-              </Link>
+              </div>
             )
           })}
         </div>

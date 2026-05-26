@@ -20,6 +20,7 @@ export type Agenda = {
   title: string
   category: Category
   description: string
+  publishedAt: string
   articleCount: {
     progressive: number
     conservative: number

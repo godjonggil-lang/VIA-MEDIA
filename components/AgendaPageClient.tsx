@@ -7,6 +7,17 @@ import type { Agenda, Article, Category } from '@/types'
 
 const CATEGORIES: (Category | '전체')[] = ['전체', '정치', '경제', '사회', '국제']
 
+// "2025-05" → "2025년 5월"
+function formatYearMonth(ym: string) {
+  const [year, month] = ym.split('-')
+  return `${year}년 ${parseInt(month)}월`
+}
+
+// publishedAt → "2025-05" 키
+function toYearMonth(dateStr: string) {
+  return dateStr.slice(0, 7)
+}
+
 export default function AgendaPageClient({
   agendas,
   articles,
@@ -17,9 +28,19 @@ export default function AgendaPageClient({
   initialView?: 'progressive' | 'conservative' | null
 }) {
   const [activeCategory, setActiveCategory] = useState<Category | '전체'>('전체')
+  const [activeMonth, setActiveMonth] = useState<string>('전체')
 
-  const filteredAgendas =
-    activeCategory === '전체' ? agendas : agendas.filter(a => a.category === activeCategory)
+  // 연도·월 목록 추출 (최신순)
+  const months = ['전체', ...Array.from(
+    new Set(agendas.map(a => toYearMonth(a.publishedAt)))
+  ).sort((a, b) => b.localeCompare(a))]
+
+  // 카테고리 + 월 필터 적용
+  const filteredAgendas = agendas.filter(a => {
+    const categoryOk = activeCategory === '전체' || a.category === activeCategory
+    const monthOk = activeMonth === '전체' || toYearMonth(a.publishedAt) === activeMonth
+    return categoryOk && monthOk
+  })
 
   // 관점 필터가 있으면 해당 기사만 표시
   if (initialView) {
@@ -41,8 +62,8 @@ export default function AgendaPageClient({
 
   return (
     <>
-      {/* Category Filter */}
-      <div className="flex gap-2 flex-wrap mb-10 border-b border-gray-200 pb-6">
+      {/* 카테고리 필터 */}
+      <div className="flex gap-2 flex-wrap mb-4">
         {CATEGORIES.map(cat => (
           <button
             key={cat}
@@ -58,8 +79,27 @@ export default function AgendaPageClient({
         ))}
       </div>
 
+      {/* 연도·월 필터 */}
+      {months.length > 1 && (
+        <div className="flex gap-2 flex-wrap mb-10 border-b border-gray-200 pb-6">
+          {months.map(ym => (
+            <button
+              key={ym}
+              onClick={() => setActiveMonth(ym)}
+              className={`font-sans text-xs px-3 py-1.5 border transition-colors ${
+                activeMonth === ym
+                  ? 'border-[#B22222] bg-[#B22222] text-white'
+                  : 'border-gray-200 text-gray-500 hover:border-gray-400'
+              }`}
+            >
+              {ym === '전체' ? '전체 기간' : formatYearMonth(ym)}
+            </button>
+          ))}
+        </div>
+      )}
+
       {filteredAgendas.length === 0 ? (
-        <p className="font-sans text-gray-400 text-center py-12">해당 카테고리의 아젠다가 없습니다.</p>
+        <p className="font-sans text-gray-400 text-center py-12">해당 조건의 아젠다가 없습니다.</p>
       ) : (
         <>
           {/* Agenda Cards */}
@@ -83,6 +123,9 @@ export default function AgendaPageClient({
                   <h2 className="font-serif font-bold text-2xl text-gray-900">{agenda.title}</h2>
                   <span className="font-sans text-xs text-gray-400 border border-gray-300 px-2 py-0.5">
                     {agenda.category}
+                  </span>
+                  <span className="font-sans text-xs text-gray-400 ml-auto">
+                    {formatYearMonth(toYearMonth(agenda.publishedAt))}
                   </span>
                 </div>
                 <p className="font-sans text-sm text-gray-600 mb-6">{agenda.description}</p>

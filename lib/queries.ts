@@ -12,6 +12,7 @@ function toAgenda(
     title: db.title,
     category: db.category,
     description: db.description ?? '',
+    publishedAt: db.published_at ?? db.created_at,
     articleCount: {
       progressive: mine.filter(a => a.perspective === 'progressive').length,
       conservative: mine.filter(a => a.perspective === 'conservative').length,

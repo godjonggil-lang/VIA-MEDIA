@@ -3,50 +3,45 @@
 import { useState } from 'react'
 import { useWaitlist } from '@/context/WaitlistContext'
 
-const PLANS = [
+const ONE_TIME_AMOUNTS = [3000, 5000, 10000]
+const RECURRING_AMOUNTS = [3000, 5000, 10000]
+
+const PREMIUM_FEATURES = [
   {
-    name: 'Free',
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    features: ['주 1회 무료 뉴스레터', '최신 아젠다 요약', '공개 기사 열람'],
-    cta: '무료 구독',
-    highlight: false,
+    title: '주간 심층 분석 보고서',
+    desc: '그 주의 핵심 아젠다를 진보·보수 시각으로 분석한 리포트를 매주 발송합니다.',
   },
   {
-    name: 'Standard',
-    monthlyPrice: 5000,
-    yearlyPrice: 50000,
-    features: ['주 3회 뉴스레터', '아젠다 심층 분석', '진보·보수 비교 기사'],
-    cta: '구독하기',
-    highlight: false,
+    title: '이주의 기사 정리',
+    desc: 'VIA MEDIA가 이번 주 다룬 모든 기사를 한눈에 볼 수 있는 요약본을 함께 제공합니다.',
   },
   {
-    name: 'Premium',
-    monthlyPrice: 12000,
-    yearlyPrice: 120000,
-    features: ['매일 뉴스레터', '전체 아카이브 열람', '심층 리포트 다운로드', '월 1회 독자 Q&A'],
-    cta: '프리미엄 구독',
-    highlight: true,
+    title: '아카이브 무제한 열람',
+    desc: '발행된 모든 아젠다·기사를 시기별로 자유롭게 탐색할 수 있습니다.',
+  },
+  {
+    title: '광고 없는 독립 저널리즘 지지',
+    desc: '구독료는 100% 콘텐츠 제작에 사용됩니다.',
   },
 ]
-
-const ONE_TIME_AMOUNTS = [1000, 3000, 5000]
-const RECURRING_AMOUNTS = [3000, 5000, 10000]
 
 export default function SubscribePage() {
   const { openModal } = useWaitlist()
   const [isYearly, setIsYearly] = useState(false)
-  const [oneTimeAmount, setOneTimeAmount] = useState<number | 'custom'>(3000)
+  const [oneTimeAmount, setOneTimeAmount] = useState<number | 'custom'>(5000)
   const [oneTimeCustom, setOneTimeCustom] = useState('')
-  const [recurringAmount, setRecurringAmount] = useState<number>(3000)
-  const [donorMessage, setDonorMessage] = useState('')
+  const [recurringAmount, setRecurringAmount] = useState<number>(5000)
 
-  const handlePlan = (plan: (typeof PLANS)[0]) => {
-    const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice
+  const monthlyPrice = 9900
+  const yearlyPrice = 99000 // 2달 무료
+
+  const price = isYearly ? yearlyPrice : monthlyPrice
+
+  const handleSubscribe = () => {
     openModal({
       amount: price,
       type: 'subscription',
-      plan: `${plan.name} ${isYearly ? '연간' : '월간'}`,
+      plan: `프리미엄 ${isYearly ? '연간' : '월간'}`,
     })
   }
 
@@ -63,112 +58,108 @@ export default function SubscribePage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      {/* Top Message */}
-      <div className="max-w-2xl mx-auto text-center mb-16">
-        <h1 className="font-serif font-black text-4xl text-gray-900 mb-6">구독 & 후원</h1>
-        <p className="font-sans text-gray-600 leading-relaxed mb-2">
-          VIA MEDIA를 후원하는 것은 특정 편을 드는 것이 아닙니다.
-        </p>
-        <p className="font-sans text-gray-600 leading-relaxed mb-2">
-          건강한 담론 자체를 지지하는 일입니다.
-        </p>
-        <p className="font-sans text-gray-600 leading-relaxed mb-2">
-          후원금은 독립 저널리즘 운영에 사용됩니다.
-        </p>
-        <p className="font-sans text-sm text-gray-400 mt-4">
-          현재 개인사업자로 운영되며 세액공제는 제공되지 않습니다.
+    <div className="max-w-4xl mx-auto px-4 py-16">
+
+      {/* 헤더 */}
+      <div className="text-center mb-16">
+        <h1 className="font-serif font-black text-4xl text-gray-900 mb-4">구독 & 후원</h1>
+        <p className="font-sans text-gray-500 leading-relaxed max-w-xl mx-auto">
+          VIA MEDIA는 광고 없이 독자의 구독료로만 운영됩니다.
+          <br />
+          건강한 담론을 지지하는 일이 곧 독립 저널리즘을 지키는 일입니다.
         </p>
       </div>
 
-      {/* Subscription Plans */}
+      {/* 프리미엄 구독 */}
       <section className="mb-20">
-        <h2 className="font-serif font-bold text-2xl text-gray-900 text-center mb-8">
-          구독 플랜
-        </h2>
+        <div className="border border-gray-900 p-10 max-w-2xl mx-auto">
 
-        {/* Monthly / Yearly Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <span
-            className={`font-sans text-sm ${!isYearly ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
-          >
-            월간
+          {/* 배지 */}
+          <span className="font-sans text-xs tracking-[0.2em] uppercase text-[#B22222] mb-6 block">
+            Premium
           </span>
-          <button
-            onClick={() => setIsYearly(!isYearly)}
-            className={`relative w-12 h-6 rounded-full transition-colors ${isYearly ? 'bg-gray-900' : 'bg-gray-300'}`}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${isYearly ? 'translate-x-6' : ''}`}
-            />
-          </button>
-          <span
-            className={`font-sans text-sm ${isYearly ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
-          >
-            연간
-            <span className="ml-1 text-xs text-[#B22222]">2개월 무료</span>
-          </span>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLANS.map((plan) => {
-            const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice
-            return (
-              <div
-                key={plan.name}
-                className={`border p-8 flex flex-col ${plan.highlight ? 'border-gray-900' : 'border-gray-200'}`}
-              >
-                {plan.highlight && (
-                  <span className="font-sans text-xs tracking-widest uppercase text-[#B22222] mb-4">
-                    추천
-                  </span>
-                )}
-                <h3 className="font-serif font-bold text-xl text-gray-900 mb-2">{plan.name}</h3>
-                <div className="mb-6">
-                  {price === 0 ? (
-                    <span className="font-serif text-3xl font-black text-gray-900">무료</span>
-                  ) : (
-                    <>
-                      <span className="font-serif text-3xl font-black text-gray-900">
-                        ₩{price.toLocaleString()}
-                      </span>
-                      <span className="font-sans text-sm text-gray-500 ml-1">
-                        /{isYearly ? '년' : '월'}
-                      </span>
-                    </>
-                  )}
+          {/* 제목 & 설명 */}
+          <h2 className="font-serif font-bold text-2xl text-gray-900 mb-2">
+            주간 심층 리포트 구독
+          </h2>
+          <p className="font-sans text-sm text-gray-500 mb-8 leading-relaxed">
+            매주 핵심 아젠다 분석 보고서와 이주의 기사 정리를 이메일로 받아보세요.
+          </p>
+
+          {/* 혜택 목록 */}
+          <ul className="space-y-5 mb-10">
+            {PREMIUM_FEATURES.map(f => (
+              <li key={f.title} className="flex gap-4">
+                <span className="text-[#B22222] font-sans font-bold mt-0.5 flex-shrink-0">—</span>
+                <div>
+                  <p className="font-sans text-sm font-semibold text-gray-900">{f.title}</p>
+                  <p className="font-sans text-xs text-gray-500 mt-0.5 leading-relaxed">{f.desc}</p>
                 </div>
-                <ul className="font-sans text-sm text-gray-600 space-y-2 mb-8 flex-1">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2">
-                      <span className="text-[#B22222] mt-0.5">—</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => handlePlan(plan)}
-                  className={`font-sans text-sm py-3 border transition-colors ${
-                    plan.highlight
-                      ? 'bg-gray-900 text-white border-gray-900 hover:bg-[#B22222] hover:border-[#B22222]'
-                      : 'border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white'
-                  }`}
-                >
-                  {plan.cta}
-                </button>
+              </li>
+            ))}
+          </ul>
+
+          {/* 가격 + 토글 */}
+          <div className="border-t border-gray-200 pt-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="font-serif text-4xl font-black text-gray-900">
+                  ₩{price.toLocaleString()}
+                </span>
+                <span className="font-sans text-sm text-gray-400 ml-2">
+                  /{isYearly ? '년' : '월'}
+                </span>
+                {isYearly && (
+                  <span className="ml-2 font-sans text-xs text-[#B22222]">2개월 무료</span>
+                )}
               </div>
-            )
-          })}
+
+              {/* 월간/연간 토글 */}
+              <div className="flex items-center gap-2">
+                <span className={`font-sans text-xs ${!isYearly ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+                  월간
+                </span>
+                <button
+                  onClick={() => setIsYearly(!isYearly)}
+                  className={`relative w-10 h-5 rounded-full transition-colors ${isYearly ? 'bg-gray-900' : 'bg-gray-300'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${isYearly ? 'translate-x-5' : ''}`} />
+                </button>
+                <span className={`font-sans text-xs ${isYearly ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+                  연간
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubscribe}
+              className="w-full font-sans text-sm py-4 bg-gray-900 text-white hover:bg-[#B22222] transition-colors"
+            >
+              프리미엄 구독 시작하기
+            </button>
+
+            <p className="font-sans text-xs text-gray-400 text-center mt-3">
+              현재 개인사업자로 운영되며 세액공제는 제공되지 않습니다.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* One-time Donation */}
-      <section className="mb-20 max-w-lg mx-auto text-center">
-        <h2 className="font-serif font-bold text-2xl text-gray-900 mb-2">일회성 후원</h2>
-        <p className="font-sans text-sm text-gray-600 mb-8">부담 없이 한 번만 응원해주세요.</p>
+      {/* 구분선 */}
+      <div className="flex items-center gap-4 mb-16">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span className="font-sans text-xs text-gray-400 tracking-widest uppercase">후원</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      {/* 일회성 후원 */}
+      <section className="mb-16 max-w-lg mx-auto text-center">
+        <h2 className="font-serif font-bold text-xl text-gray-900 mb-1">일회성 후원</h2>
+        <p className="font-sans text-sm text-gray-500 mb-6">부담 없이 한 번만 응원해주세요.</p>
 
         <div className="flex flex-wrap gap-2 justify-center mb-4">
-          {ONE_TIME_AMOUNTS.map((amount) => (
+          {ONE_TIME_AMOUNTS.map(amount => (
             <button
               key={amount}
               onClick={() => setOneTimeAmount(amount)}
@@ -198,23 +189,10 @@ export default function SubscribePage() {
             type="text"
             placeholder="금액 입력 (원)"
             value={oneTimeCustom}
-            onChange={(e) => setOneTimeCustom(e.target.value)}
+            onChange={e => setOneTimeCustom(e.target.value)}
             className="border border-gray-300 px-4 py-2 font-sans text-sm w-48 focus:outline-none focus:border-gray-800 text-center mb-4 block mx-auto"
           />
         )}
-
-        <div className="mb-4">
-          <label className="block font-sans text-sm text-gray-700 mb-1 text-left">
-            응원 메시지 (선택)
-          </label>
-          <textarea
-            value={donorMessage}
-            onChange={(e) => setDonorMessage(e.target.value)}
-            placeholder="독립 저널리즘을 응원합니다!"
-            rows={3}
-            className="w-full border border-gray-300 px-3 py-2 font-sans text-sm focus:outline-none focus:border-gray-800 resize-none"
-          />
-        </div>
 
         <button
           onClick={handleOneTime}
@@ -224,15 +202,15 @@ export default function SubscribePage() {
         </button>
       </section>
 
-      {/* Recurring Donation */}
-      <section className="max-w-lg mx-auto text-center border-t border-gray-200 pt-16 mb-12">
-        <h2 className="font-serif font-bold text-2xl text-gray-900 mb-2">정기 후원</h2>
-        <p className="font-sans text-sm text-gray-600 mb-8">
+      {/* 정기 후원 */}
+      <section className="max-w-lg mx-auto text-center">
+        <h2 className="font-serif font-bold text-xl text-gray-900 mb-1">정기 후원</h2>
+        <p className="font-sans text-sm text-gray-500 mb-6">
           매월 정기적으로 독립 저널리즘을 지지해주세요.
         </p>
 
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {RECURRING_AMOUNTS.map((amount) => (
+        <div className="flex flex-wrap gap-2 justify-center mb-6">
+          {RECURRING_AMOUNTS.map(amount => (
             <button
               key={amount}
               onClick={() => setRecurringAmount(amount)}

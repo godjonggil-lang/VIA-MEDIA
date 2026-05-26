@@ -1,12 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// 30초 모듈 레벨 캐시 (웜 인스턴스에서 재사용)
-let cache: { value: boolean; ts: number } | null = null
-
+// 캐시 없이 매 요청마다 Supabase에서 최신값 조회
 async function isMaintenanceMode(): Promise<boolean> {
-  if (cache && Date.now() - cache.ts < 30_000) return cache.value
-
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/site_settings?key=eq.maintenance_mode&select=value`,
@@ -19,11 +15,9 @@ async function isMaintenanceMode(): Promise<boolean> {
       }
     )
     const data = await res.json()
-    const value = data[0]?.value === 'true'
-    cache = { value, ts: Date.now() }
-    return value
+    return data[0]?.value === 'true'
   } catch {
-    return cache?.value ?? false
+    return false
   }
 }
 
@@ -37,15 +31,22 @@ export async function proxy(request: NextRequest) {
   if (!isAdmin && !isMaintenance) {
     const maintenance = await isMaintenanceMode()
     if (maintenance) {
-      return NextResponse.redirect(new URL('/maintenance', request.url), 302)
+      // CDN 캐싱 방지: no-store 헤더 추가
+      const res = NextResponse.redirect(new URL('/maintenance', request.url), 302)
+      res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+      res.headers.set('Pragma', 'no-cache')
+      return res
     }
   }
 
+  // 정상 응답에도 캐싱 방지 (토글 즉시 반영)
+  const res = NextResponse.next()
+  res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+
   // 어드민 인증
   if (isAdmin) {
-    // 로그인·로그아웃 API는 인증 없이 통과
     if (pathname === '/admin/login' || pathname.startsWith('/api/admin')) {
-      return NextResponse.next()
+      return res
     }
     const token = request.cookies.get('admin-token')?.value
     if (!token || token !== process.env.ADMIN_PASSWORD) {
@@ -53,7 +54,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  return res
 }
 
 export const config = {

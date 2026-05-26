@@ -30,8 +30,8 @@ async function isMaintenanceMode(): Promise<boolean> {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // 어드민·점검 페이지는 유지보수 체크 건너뜀
-  const isAdmin = pathname.startsWith('/admin')
+  // 어드민·API 어드민·점검 페이지는 유지보수 체크 건너뜀
+  const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isMaintenance = pathname === '/maintenance'
 
   if (!isAdmin && !isMaintenance) {
@@ -43,7 +43,10 @@ export async function proxy(request: NextRequest) {
 
   // 어드민 인증
   if (isAdmin) {
-    if (pathname === '/admin/login') return NextResponse.next()
+    // 로그인·로그아웃 API는 인증 없이 통과
+    if (pathname === '/admin/login' || pathname.startsWith('/api/admin')) {
+      return NextResponse.next()
+    }
     const token = request.cookies.get('admin-token')?.value
     if (!token || token !== process.env.ADMIN_PASSWORD) {
       return NextResponse.redirect(new URL('/admin/login', request.url))

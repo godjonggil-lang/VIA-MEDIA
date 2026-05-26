@@ -81,7 +81,7 @@ export async function saveAll(formData: FormData) {
   const agendaId = formData.get('agendaId') as string
 
   // 1. 아젠다 정보 저장
-  await supabase
+  const { error: agendaError } = await supabase
     .from('agendas')
     .update({
       title: formData.get('agendaTitle') as string,
@@ -90,28 +90,52 @@ export async function saveAll(formData: FormData) {
     } as object)
     .eq('id', agendaId)
 
+  if (agendaError) {
+    console.error('[saveAll] agenda update error:', agendaError)
+    redirect(`/admin/agenda/${agendaId}?error=1`)
+  }
+
   // 2. 진보·보수 기사 저장 (있으면 update, 없으면 insert)
   for (const perspective of ['progressive', 'conservative'] as Perspective[]) {
-    const articleId = formData.get(`${perspective}_articleId`) as string
+    const articleId = formData.get(`${perspective}_articleId`) as string | null
     const slug = formData.get(`${perspective}_slug`) as string
     const title = formData.get(`${perspective}_title`) as string
     if (!slug || !title) continue
 
-    const payload = {
-      agenda_id: agendaId,
-      slug,
-      title,
-      summary: (formData.get(`${perspective}_summary`) as string) || null,
-      content: (formData.get(`${perspective}_content`) as string) || null,
-      perspective,
-      author: (formData.get(`${perspective}_author`) as Author) || 'publisher',
-      status: 'draft',
-    } as object
-
     if (articleId) {
-      await supabase.from('articles').update(payload).eq('id', articleId)
+      // 기존 기사 수정 — status는 변경하지 않음 (게시 상태 유지)
+      const updatePayload = {
+        slug,
+        title,
+        summary: (formData.get(`${perspective}_summary`) as string) || null,
+        content: (formData.get(`${perspective}_content`) as string) || null,
+        author: (formData.get(`${perspective}_author`) as Author) || 'publisher',
+      } as object
+
+      const { error } = await supabase.from('articles').update(updatePayload).eq('id', articleId)
+      if (error) {
+        console.error(`[saveAll] article update error (${perspective}):`, error)
+        redirect(`/admin/agenda/${agendaId}?error=1`)
+      }
     } else {
-      await supabase.from('articles').insert(payload)
+      // 새 기사 생성
+      const insertPayload = {
+        agenda_id: agendaId,
+        slug,
+        title,
+        summary: (formData.get(`${perspective}_summary`) as string) || null,
+        content: (formData.get(`${perspective}_content`) as string) || null,
+        perspective,
+        author: (formData.get(`${perspective}_author`) as Author) || 'publisher',
+        status: 'draft',
+        published_at: null,
+      } as object
+
+      const { error } = await supabase.from('articles').insert(insertPayload)
+      if (error) {
+        console.error(`[saveAll] article insert error (${perspective}):`, error)
+        redirect(`/admin/agenda/${agendaId}?error=1`)
+      }
     }
   }
 

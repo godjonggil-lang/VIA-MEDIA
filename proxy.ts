@@ -28,14 +28,18 @@ export async function proxy(request: NextRequest) {
   const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isMaintenance = pathname === '/maintenance'
 
-  if (!isAdmin && !isMaintenance) {
+  if (!isAdmin) {
     const maintenance = await isMaintenanceMode()
-    if (maintenance) {
-      // CDN 캐싱 방지: no-store 헤더 추가
+    if (maintenance && !isMaintenance) {
+      // 점검 모드 ON → /maintenance로 리디렉션
       const res = NextResponse.redirect(new URL('/maintenance', request.url), 302)
       res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
       res.headers.set('Pragma', 'no-cache')
       return res
+    }
+    if (!maintenance && isMaintenance) {
+      // 점검 모드 OFF인데 /maintenance 직접 접근 → 홈으로
+      return NextResponse.redirect(new URL('/', request.url), 302)
     }
   }
 

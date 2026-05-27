@@ -3,8 +3,8 @@ import './globals.css'
 import SiteShell from '@/components/SiteShell'
 
 export const metadata: Metadata = {
-  title: 'VIA MEDIA — Understand Before You Take a Side',
-  description: '진보와 보수의 시각을 건조하게 기록하는 독립 언론. 이해가 먼저, 입장은 그 다음입니다.',
+  title: 'VIA MEDIA News ??Understand Before You Take a Side',
+  description: '진보?� 보수???�각??건조?�게 기록?�는 ?�립 ?�론. ?�해가 먼�?, ?�장?� �??�음?�니??',
 }
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full">
       <head>
-        {/* Noto fonts via Google — swap ensures system fonts show first */}
+        {/* Noto fonts via Google ??swap ensures system fonts show first */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

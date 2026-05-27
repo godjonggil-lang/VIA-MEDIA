@@ -16,7 +16,7 @@ export default function ShareButtons({
     setPageUrl(`${window.location.origin}/article/${slug}`)
   }, [slug])
 
-  const shareText = `${title} — 진보와 보수의 시각으로 읽기 | VIA MEDIA`
+  const shareText = `${title} ??진보?� 보수???�각?�로 ?�기 | VIA MEDIA News`
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`
 
   const handleCopy = async () => {
@@ -40,21 +40,20 @@ export default function ShareButtons({
         rel="noopener noreferrer"
         className="font-sans text-xs border border-gray-300 px-3 py-1.5 text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
       >
-        X (트위터)
+        X (?�위??
       </a>
 
       <button
-        onClick={() => alert('카카오 공유는 런칭 시 지원 예정입니다.')}
+        onClick={() => alert('카카??공유???�칭 ??지???�정?�니??')}
         className="font-sans text-xs border border-gray-300 px-3 py-1.5 text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
       >
-        카카오
-      </button>
+        카카??      </button>
 
       <button
         onClick={handleCopy}
         className="font-sans text-xs border border-gray-300 px-3 py-1.5 text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors"
       >
-        {copied ? '복사됨 ✓' : '링크 복사'}
+        {copied ? '복사???? : '링크 복사'}
       </button>
     </div>
   )

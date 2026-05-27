@@ -20,10 +20,10 @@ export default function SupportWidget({ articleSlug }: { articleSlug: string }) 
   return (
     <div className="border-t border-b border-gray-200 py-8 my-10">
       <p className="font-sans text-sm text-gray-600 leading-relaxed text-center mb-1">
-        이 기사가 균형 잡힌 시각에 도움이 됐나요?
+        ??기사가 균형 ?�힌 ?�각???��????�나??
       </p>
       <p className="font-sans text-sm text-gray-600 leading-relaxed text-center mb-6">
-        VIA MEDIA의 독립 저널리즘을 응원해주세요. 건강한 담론을 지지하는 일입니다.
+        VIA MEDIA News???�립 ?�?�리즘을 ?�원?�주?�요. 건강???�론??지지?�는 ?�입?�다.
       </p>
 
       <div className="flex flex-wrap gap-2 justify-center mb-4">
@@ -37,7 +37,7 @@ export default function SupportWidget({ articleSlug }: { articleSlug: string }) 
                 : 'border-gray-300 text-gray-700 hover:border-gray-900'
             }`}
           >
-            ₩{amount.toLocaleString()}
+            ??amount.toLocaleString()}
           </button>
         ))}
         <button
@@ -48,7 +48,7 @@ export default function SupportWidget({ articleSlug }: { articleSlug: string }) 
               : 'border-gray-300 text-gray-700 hover:border-gray-900'
           }`}
         >
-          직접입력
+          직접?�력
         </button>
       </div>
 
@@ -56,7 +56,7 @@ export default function SupportWidget({ articleSlug }: { articleSlug: string }) 
         <div className="flex justify-center mb-4">
           <input
             type="text"
-            placeholder="금액 입력 (원)"
+            placeholder="금액 ?�력 (??"
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
             className="border border-gray-300 px-4 py-2 font-sans text-sm w-48 focus:outline-none focus:border-gray-800 text-center"
@@ -69,7 +69,7 @@ export default function SupportWidget({ articleSlug }: { articleSlug: string }) 
           onClick={handleSupport}
           className="font-sans text-sm px-10 py-3 bg-[#B22222] text-white hover:bg-[#8B0000] transition-colors"
         >
-          응원하기
+          ?�원?�기
         </button>
       </div>
     </div>

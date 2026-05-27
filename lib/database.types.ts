@@ -1,4 +1,4 @@
-export type Category = '정치' | '경제' | '사회' | '국제'
+export type Category = '?�치' | '경제' | '?�회' | '�?��'
 export type Perspective = 'progressive' | 'conservative' | 'analysis'
 export type Author = 'publisher' | 'editor'
 export type AgendaStatus = 'draft' | 'published'

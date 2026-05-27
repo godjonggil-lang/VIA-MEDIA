@@ -80,8 +80,7 @@ export async function saveAll(formData: FormData) {
   const supabase = createAdminClient()
   const agendaId = formData.get('agendaId') as string
 
-  // 1. 아젠다 정보 저장
-  const { error: agendaError } = await supabase
+  // 1. ?�젠???�보 ?�??  const { error: agendaError } = await supabase
     .from('agendas')
     .update({
       title: formData.get('agendaTitle') as string,
@@ -95,7 +94,7 @@ export async function saveAll(formData: FormData) {
     redirect(`/admin/agenda/${agendaId}?error=1`)
   }
 
-  // 2. 진보·보수 기사 저장 (있으면 update, 없으면 insert)
+  // 2. 진보·보수 기사 ?�??(?�으�?update, ?�으�?insert)
   for (const perspective of ['progressive', 'conservative'] as Perspective[]) {
     const articleId = formData.get(`${perspective}_articleId`) as string | null
     const slug = formData.get(`${perspective}_slug`) as string
@@ -103,7 +102,7 @@ export async function saveAll(formData: FormData) {
     if (!slug || !title) continue
 
     if (articleId) {
-      // 기존 기사 수정 — status는 변경하지 않음 (게시 상태 유지)
+      // 기존 기사 ?�정 ??status??변경하지 ?�음 (게시 ?�태 ?��?)
       const updatePayload = {
         slug,
         title,
@@ -118,7 +117,7 @@ export async function saveAll(formData: FormData) {
         redirect(`/admin/agenda/${agendaId}?error=1`)
       }
     } else {
-      // 새 기사 생성
+      // ??기사 ?�성
       const insertPayload = {
         agenda_id: agendaId,
         slug,
@@ -244,7 +243,7 @@ export async function deleteAgenda(formData: FormData) {
   const supabase = createAdminClient()
   const id = formData.get('id') as string
 
-  // 기사 먼저 삭제 후 아젠다 삭제
+  // 기사 먼�? ??�� ???�젠????��
   await supabase.from('articles').delete().eq('agenda_id', id)
   await supabase.from('agendas').delete().eq('id', id)
 

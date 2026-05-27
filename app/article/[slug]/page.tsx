@@ -15,9 +15,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const article = await getArticleBySlug(slug)
-  if (!article) return { title: 'VIA MEDIA' }
+  if (!article) return { title: 'VIA MEDIA News' }
   return {
-    title: `${article.title} | VIA MEDIA`,
+    title: `${article.title} | VIA MEDIA News`,
     description: article.summary,
   }
 }
@@ -112,7 +112,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div className="bg-gray-50 border border-gray-200 p-8 text-center">
           <p className="font-serif font-bold text-xl text-gray-900 mb-2">균형 잡힌 시각을 유지하세요</p>
           <p className="font-sans text-sm text-gray-600 mb-5">
-            VIA MEDIA를 구독하면 주요 아젠다마다 진보와 보수의 시각을 함께 받아보실 수 있습니다.
+            VIA MEDIA News를 구독하면 주요 아젠다마다 진보와 보수의 시각을 함께 받아보실 수 있습니다.
           </p>
           <Link
             href="/subscribe"

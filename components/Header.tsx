@@ -5,12 +5,12 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 const navLinks = [
-  { href: '/', label: '홈' },
-  { href: '/agenda', label: '아젠다' },
-  { href: '/agenda?view=progressive', label: '진보의 시각' },
-  { href: '/agenda?view=conservative', label: '보수의 시각' },
-  { href: '/subscribe', label: '구독·후원' },
-  { href: '/about', label: '소개' },
+  { href: '/', label: '?? },
+  { href: '/agenda', label: '?�젠?? },
+  { href: '/agenda?view=progressive', label: '진보???�각' },
+  { href: '/agenda?view=conservative', label: '보수???�각' },
+  { href: '/subscribe', label: '구독·?�원' },
+  { href: '/about', label: '?�개' },
 ]
 
 export default function Header() {
@@ -24,7 +24,7 @@ export default function Header() {
         <div className="flex items-center justify-between py-4">
           <Link href="/" className="group flex flex-col">
             <span className="font-serif font-black text-2xl sm:text-3xl tracking-widest text-gray-900 group-hover:text-[#B22222] transition-colors">
-              VIA MEDIA
+              VIA MEDIA <span className="text-[#B22222]">News</span>
             </span>
             <span className="font-sans text-[10px] text-gray-400 tracking-widest uppercase hidden sm:block">
               Understand Before You Take a Side
@@ -61,7 +61,7 @@ export default function Header() {
           <button
             className="md:hidden flex flex-col gap-1.5 p-2"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+            aria-label={menuOpen ? '메뉴 ?�기' : '메뉴 ?�기'}
           >
             <span
               className={`block w-6 h-0.5 bg-gray-900 transition-transform origin-center ${menuOpen ? 'translate-y-2 rotate-45' : ''}`}

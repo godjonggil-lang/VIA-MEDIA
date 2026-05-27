@@ -2,11 +2,11 @@ import { Perspective } from '@/types'
 
 const config: Record<Perspective, { label: string; className: string }> = {
   progressive: {
-    label: '진보의 시각',
+    label: '진보???�각',
     className: 'border border-[#B22222] text-[#B22222]',
   },
   conservative: {
-    label: '보수의 시각',
+    label: '보수???�각',
     className: 'border border-gray-800 text-gray-800',
   },
   analysis: {

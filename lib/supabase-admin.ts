@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-// 서버 전용 — 어드민 작업에 사용 (RLS 우회)
+// ?�버 ?�용 ???�드�??�업???�용 (RLS ?�회)
 export function createAdminClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

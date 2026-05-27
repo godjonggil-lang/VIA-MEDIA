@@ -5,16 +5,15 @@ import AgendaCard from './AgendaCard'
 import ArticleCard from './ArticleCard'
 import type { Agenda, Article, Category } from '@/types'
 
-const CATEGORIES: (Category | '전체')[] = ['전체', '정치', '경제', '사회', '국제']
+const CATEGORIES: (Category | '?�체')[] = ['?�체', '?�치', '경제', '?�회', '�?��']
 
-// "2025-05" → "2025년 5월"
+// "2025-05" ??"2025??5??
 function formatYearMonth(ym: string) {
   const [year, month] = ym.split('-')
-  return `${year}년 ${parseInt(month)}월`
+  return `${year}??${parseInt(month)}??
 }
 
-// publishedAt → "2025-05" 키
-function toYearMonth(dateStr: string) {
+// publishedAt ??"2025-05" ??function toYearMonth(dateStr: string) {
   return dateStr.slice(0, 7)
 }
 
@@ -27,35 +26,35 @@ export default function AgendaPageClient({
   articles: Article[]
   initialView?: 'progressive' | 'conservative' | null
 }) {
-  const [activeCategory, setActiveCategory] = useState<Category | '전체'>('전체')
-  const [activeMonth, setActiveMonth] = useState<string>('전체')
+  const [activeCategory, setActiveCategory] = useState<Category | '?�체'>('?�체')
+  const [activeMonth, setActiveMonth] = useState<string>('?�체')
 
-  // 연도·월 목록 추출 (최신순)
-  const months = ['전체', ...Array.from(
+  // ?�도·??목록 추출 (최신??
+  const months = ['?�체', ...Array.from(
     new Set(agendas.map(a => toYearMonth(a.publishedAt)))
   ).sort((a, b) => b.localeCompare(a))]
 
-  // 카테고리 + 월 필터 적용
+  // 카테고리 + ???�터 ?�용
   const filteredAgendas = agendas.filter(a => {
-    const categoryOk = activeCategory === '전체' || a.category === activeCategory
-    const monthOk = activeMonth === '전체' || toYearMonth(a.publishedAt) === activeMonth
+    const categoryOk = activeCategory === '?�체' || a.category === activeCategory
+    const monthOk = activeMonth === '?�체' || toYearMonth(a.publishedAt) === activeMonth
     return categoryOk && monthOk
   })
 
-  // 관점 필터가 있으면 해당 기사만 표시 (연도·월 필터 포함)
+  // 관???�터가 ?�으�??�당 기사�??�시 (?�도·???�터 ?�함)
   if (initialView) {
     const viewArticles = articles.filter(a => a.perspective === initialView)
-    const viewMonths = ['전체', ...Array.from(
+    const viewMonths = ['?�체', ...Array.from(
       new Set(viewArticles.map(a => toYearMonth(a.publishedAt)))
     ).sort((a, b) => b.localeCompare(a))]
 
-    const filteredViewArticles = activeMonth === '전체'
+    const filteredViewArticles = activeMonth === '?�체'
       ? viewArticles
       : viewArticles.filter(a => toYearMonth(a.publishedAt) === activeMonth)
 
     return (
       <div className="space-y-6">
-        {/* 연도·월 필터 */}
+        {/* ?�도·???�터 */}
         {viewMonths.length > 1 && (
           <div className="flex gap-2 flex-wrap mb-6 border-b border-gray-200 pb-6">
             {viewMonths.map(ym => (
@@ -68,14 +67,14 @@ export default function AgendaPageClient({
                     : 'border-gray-200 text-gray-500 hover:border-gray-400'
                 }`}
               >
-                {ym === '전체' ? '전체 기간' : formatYearMonth(ym)}
+                {ym === '?�체' ? '?�체 기간' : formatYearMonth(ym)}
               </button>
             ))}
           </div>
         )}
 
         {filteredViewArticles.length === 0 ? (
-          <p className="font-sans text-gray-400 text-center py-20">아직 게시된 기사가 없습니다.</p>
+          <p className="font-sans text-gray-400 text-center py-20">?�직 게시??기사가 ?�습?�다.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {filteredViewArticles.map(article => (
@@ -89,7 +88,7 @@ export default function AgendaPageClient({
 
   return (
     <>
-      {/* 카테고리 필터 */}
+      {/* 카테고리 ?�터 */}
       <div className="flex gap-2 flex-wrap mb-4">
         {CATEGORIES.map(cat => (
           <button
@@ -106,7 +105,7 @@ export default function AgendaPageClient({
         ))}
       </div>
 
-      {/* 연도·월 필터 */}
+      {/* ?�도·???�터 */}
       {months.length > 1 && (
         <div className="flex gap-2 flex-wrap mb-10 border-b border-gray-200 pb-6">
           {months.map(ym => (
@@ -119,14 +118,14 @@ export default function AgendaPageClient({
                   : 'border-gray-200 text-gray-500 hover:border-gray-400'
               }`}
             >
-              {ym === '전체' ? '전체 기간' : formatYearMonth(ym)}
+              {ym === '?�체' ? '?�체 기간' : formatYearMonth(ym)}
             </button>
           ))}
         </div>
       )}
 
       {filteredAgendas.length === 0 ? (
-        <p className="font-sans text-gray-400 text-center py-12">해당 조건의 아젠다가 없습니다.</p>
+        <p className="font-sans text-gray-400 text-center py-12">?�당 조건???�젠?��? ?�습?�다.</p>
       ) : (
         <>
           {/* Agenda Cards */}

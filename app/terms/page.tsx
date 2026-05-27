@@ -1,36 +1,36 @@
 import { siteConfig } from '@/lib/data'
 
 export const metadata = {
-  title: '이용약관 | VIA MEDIA',
+  title: '?�용?��? | VIA MEDIA News',
 }
 
 export default function TermsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="max-w-2xl mx-auto">
-        <h1 className="font-serif font-black text-4xl text-gray-900 mb-4">이용약관</h1>
-        <p className="font-sans text-sm text-gray-400 mb-10">최종 수정일: 2025년 11월 1일</p>
+        <h1 className="font-serif font-black text-4xl text-gray-900 mb-4">?�용?��?</h1>
+        <p className="font-sans text-sm text-gray-400 mb-10">최종 ?�정?? 2025??11??1??/p>
 
         <div className="font-sans text-gray-700 space-y-10">
           <section>
             <h2 className="font-serif font-bold text-xl text-gray-900 mb-4 border-b border-gray-200 pb-3">
-              1. 서비스 목적 및 운영 주체
+              1. ?�비??목적 �??�영 주체
             </h2>
             <p className="leading-relaxed mb-3">
-              VIA MEDIA는 진보와 보수의 시각을 균형 있게 제공하는 독립 언론 서비스입니다.
-              건강한 담론을 통해 더 나은 사회 형성에 기여하는 것을 목표로 합니다.
+              VIA MEDIA News??진보?� 보수???�각??균형 ?�게 ?�공?�는 ?�립 ?�론 ?�비?�입?�다.
+              건강???�론???�해 ???��? ?�회 ?�성??기여?�는 것을 목표�??�니??
             </p>
             <dl className="space-y-2 text-sm">
               <div className="flex gap-4">
-                <dt className="text-gray-400 shrink-0 w-24">발행인</dt>
+                <dt className="text-gray-400 shrink-0 w-24">발행??/dt>
                 <dd>{siteConfig.publisher.name}</dd>
               </div>
               <div className="flex gap-4">
-                <dt className="text-gray-400 shrink-0 w-24">편집인</dt>
+                <dt className="text-gray-400 shrink-0 w-24">?�집??/dt>
                 <dd>{siteConfig.editor.name}</dd>
               </div>
               <div className="flex gap-4">
-                <dt className="text-gray-400 shrink-0 w-24">연락처</dt>
+                <dt className="text-gray-400 shrink-0 w-24">?�락�?/dt>
                 <dd>
                   <a href={`mailto:${siteConfig.contact.email}`} className="text-[#B22222] hover:underline">
                     {siteConfig.contact.email}
@@ -42,51 +42,51 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-serif font-bold text-xl text-gray-900 mb-4 border-b border-gray-200 pb-3">
-              2. 구독 및 후원 조건
+              2. 구독 �??�원 조건
             </h2>
             <p className="leading-relaxed mb-3">
-              구독 및 후원 서비스는 현재 준비 중이며, 런칭 후 다음 조건으로 제공됩니다.
+              구독 �??�원 ?�비?�는 ?�재 준�?중이�? ?�칭 ???�음 조건?�로 ?�공?�니??
             </p>
             <ul className="space-y-2 pl-4">
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>구독 플랜은 월간 또는 연간 단위로 제공됩니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>구독 ?�랜?� ?�간 ?�는 ?�간 ?�위�??�공?�니??</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>후원은 일회성 및 정기 후원으로 구분됩니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>?�원?� ?�회??�??�기 ?�원?�로 구분?�니??</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>만 14세 미만은 이용할 수 없습니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>�?14??미만?� ?�용?????�습?�다.</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>정확한 결제 정보를 제공해야 합니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>?�확??결제 ?�보�??�공?�야 ?�니??</span>
               </li>
             </ul>
           </section>
 
           <section>
             <h2 className="font-serif font-bold text-xl text-gray-900 mb-4 border-b border-gray-200 pb-3">
-              3. 콘텐츠 저작권
+              3. 콘텐�??�?�권
             </h2>
             <p className="leading-relaxed mb-3">
-              VIA MEDIA에 게재된 모든 기사, 분석, 이미지 등의 콘텐츠에 대한 저작권은 VIA MEDIA
-              및 해당 필자에게 있습니다.
+              VIA MEDIA News??게재??모든 기사, 분석, ?��?지 ?�의 콘텐츠에 ?�???�?�권?� VIA MEDIA News
+              �??�당 ?�자?�게 ?�습?�다.
             </p>
             <ul className="space-y-2 pl-4">
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>무단 전재, 재배포, 복제를 금합니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>무단 ?�재, ?�배?? 복제�?금합?�다.</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>출처를 밝힌 인용은 원칙적으로 허용됩니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>출처�?밝힌 ?�용?� ?�칙?�으�??�용?�니??</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
-                <span>상업적 이용은 사전 서면 동의가 필요합니다.</span>
+                <span className="text-[#B22222] shrink-0">??/span>
+                <span>?�업???�용?� ?�전 ?�면 ?�의가 ?�요?�니??</span>
               </li>
             </ul>
           </section>
@@ -96,39 +96,39 @@ export default function TermsPage() {
               4. 면책 조항
             </h2>
             <p className="leading-relaxed mb-3">
-              VIA MEDIA의 콘텐츠는 특정 투자, 법률, 의료 등에 대한 전문적 조언이 아닙니다.
-              모든 기사는 필자의 분석과 견해를 담고 있으며, VIA MEDIA는 해당 내용의 정확성과
-              완전성에 대해 무한한 책임을 지지 않습니다.
+              VIA MEDIA News??콘텐츠는 ?�정 ?�자, 법률, ?�료 ?�에 ?�???�문??조언???�닙?�다.
+              모든 기사???�자??분석�?견해�??�고 ?�으�? VIA MEDIA News???�당 ?�용???�확?�과
+              ?�전?�에 ?�??무한??책임??지지 ?�습?�다.
             </p>
             <p className="leading-relaxed">
-              서비스 중단, 오류, 또는 데이터 손실로 인한 피해에 대해 VIA MEDIA는 법적으로
-              허용된 범위 내에서 책임을 제한합니다.
+              ?�비??중단, ?�류, ?�는 ?�이???�실�??�한 ?�해???�??VIA MEDIA News??법적?�로
+              ?�용??범위 ?�에??책임???�한?�니??
             </p>
           </section>
 
           <section>
             <h2 className="font-serif font-bold text-xl text-gray-900 mb-4 border-b border-gray-200 pb-3">
-              5. 환불 정책
+              5. ?�불 ?�책
             </h2>
             <ul className="space-y-3 pl-4">
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
+                <span className="text-[#B22222] shrink-0">??/span>
                 <span>
-                  <strong>구독 취소:</strong> 구독 취소 시 당월 말까지 서비스가 제공됩니다.
-                  당월 결제 금액은 환불되지 않습니다.
+                  <strong>구독 취소:</strong> 구독 취소 ???�월 말까지 ?�비?��? ?�공?�니??
+                  ?�월 결제 금액?� ?�불?��? ?�습?�다.
                 </span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
+                <span className="text-[#B22222] shrink-0">??/span>
                 <span>
-                  <strong>연간 구독:</strong> 결제 후 7일 이내 취소 시 전액 환불합니다.
-                  7일 이후에는 잔여 개월 수에 비례하여 환불합니다.
+                  <strong>?�간 구독:</strong> 결제 ??7???�내 취소 ???�액 ?�불?�니??
+                  7???�후?�는 ?�여 개월 ?�에 비�??�여 ?�불?�니??
                 </span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#B22222] shrink-0">—</span>
+                <span className="text-[#B22222] shrink-0">??/span>
                 <span>
-                  <strong>후원:</strong> 일회성 및 정기 후원은 원칙적으로 환불되지 않습니다.
+                  <strong>?�원:</strong> ?�회??�??�기 ?�원?� ?�칙?�으�??�불?��? ?�습?�다.
                 </span>
               </li>
             </ul>

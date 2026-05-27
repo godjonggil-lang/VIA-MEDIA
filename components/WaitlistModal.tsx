@@ -29,11 +29,11 @@ export default function WaitlistModal() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!agreePrivacy) {
-      setError('개인정보처리방침에 동의해주세요.')
+      setError('개인?�보처리방침???�의?�주?�요.')
       return
     }
     if (!email) {
-      setError('이메일을 입력해주세요.')
+      setError('?�메?�을 ?�력?�주?�요.')
       return
     }
     const entry = {
@@ -63,7 +63,7 @@ export default function WaitlistModal() {
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl leading-none"
-          aria-label="닫기"
+          aria-label="?�기"
         >
           ×
         </button>
@@ -71,34 +71,34 @@ export default function WaitlistModal() {
         {submitted ? (
           <div className="text-center py-4">
             <div className="w-12 h-12 border-2 border-[#B22222] mx-auto mb-4 flex items-center justify-center">
-              <span className="text-[#B22222] text-xl">✓</span>
+              <span className="text-[#B22222] text-xl">??/span>
             </div>
-            <h3 className="font-serif font-bold text-xl text-gray-900 mb-2">등록되었습니다</h3>
+            <h3 className="font-serif font-bold text-xl text-gray-900 mb-2">?�록?�었?�니??/h3>
             <p className="font-sans text-sm text-gray-600">
-              런칭 시 가장 먼저 알려드리겠습니다.
+              ?�칭 ??가??먼�? ?�려?�리겠습?�다.
               <br />
-              독립 저널리즘을 응원해주셔서 감사합니다.
+              ?�립 ?�?�리즘을 ?�원?�주?�서 감사?�니??
             </p>
             <button
               onClick={closeModal}
               className="mt-6 w-full bg-gray-900 text-white font-sans text-sm py-3 hover:bg-[#B22222] transition-colors"
             >
-              닫기
+              ?�기
             </button>
           </div>
         ) : (
           <>
             <h3 className="font-serif font-bold text-xl text-gray-900 mb-1">
-              서비스 준비 중입니다
+              ?�비??준�?중입?�다
             </h3>
             <p className="font-sans text-sm text-gray-600 mb-6">
-              결제 시스템을 준비 중입니다. 이메일을 남겨주시면 런칭 시 알려드리겠습니다.
+              결제 ?�스?�을 준�?중입?�다. ?�메?�을 ?�겨주시�??�칭 ???�려?�리겠습?�다.
             </p>
 
             {options.amount && (
               <div className="bg-gray-50 border border-gray-200 p-3 mb-5 text-sm font-sans text-gray-700">
-                선택하신 금액:{' '}
-                <strong className="text-[#B22222]">₩{options.amount.toLocaleString()}</strong>
+                ?�택?�신 금액:{' '}
+                <strong className="text-[#B22222]">??options.amount.toLocaleString()}</strong>
                 {options.plan && <span className="ml-2 text-gray-500">({options.plan})</span>}
               </div>
             )}
@@ -106,8 +106,7 @@ export default function WaitlistModal() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block font-sans text-sm font-medium text-gray-700 mb-1">
-                  이메일
-                </label>
+                  ?�메??                </label>
                 <input
                   type="email"
                   value={email}
@@ -126,7 +125,7 @@ export default function WaitlistModal() {
                     onChange={(e) => setNotifyLaunch(e.target.checked)}
                     className="accent-[#B22222]"
                   />
-                  <span className="font-sans text-sm text-gray-700">런칭 알림 받기</span>
+                  <span className="font-sans text-sm text-gray-700">?�칭 ?�림 받기</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -135,7 +134,7 @@ export default function WaitlistModal() {
                     onChange={(e) => setNotifyArticles(e.target.checked)}
                     className="accent-[#B22222]"
                   />
-                  <span className="font-sans text-sm text-gray-700">관련 후속 기사 알림 받기</span>
+                  <span className="font-sans text-sm text-gray-700">관???�속 기사 ?�림 받기</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -147,9 +146,9 @@ export default function WaitlistModal() {
                   />
                   <span className="font-sans text-sm text-gray-700">
                     <Link href="/privacy" className="underline hover:text-[#B22222]" onClick={closeModal}>
-                      개인정보처리방침
+                      개인?�보처리방침
                     </Link>
-                    에 동의합니다 <span className="text-[#B22222]">*</span>
+                    ???�의?�니??<span className="text-[#B22222]">*</span>
                   </span>
                 </label>
               </div>
@@ -162,7 +161,7 @@ export default function WaitlistModal() {
                 type="submit"
                 className="w-full bg-gray-900 text-white font-sans text-sm py-3 hover:bg-[#B22222] transition-colors"
               >
-                등록하기
+                ?�록?�기
               </button>
             </form>
           </>

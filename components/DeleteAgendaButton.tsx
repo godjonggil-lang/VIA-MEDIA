@@ -15,7 +15,7 @@ export default function DeleteAgendaButton({
   function handleClick(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
-    if (confirm(`"${agendaTitle}" 아젠다와 관련 기사를 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`)) {
+    if (confirm(`"${agendaTitle}" ?�젠?��? 관??기사�?모두 ??��?�까??\n???�업?� ?�돌�????�습?�다.`)) {
       formRef.current?.requestSubmit()
     }
   }
@@ -28,7 +28,7 @@ export default function DeleteAgendaButton({
         onClick={handleClick}
         className="font-sans text-xs text-red-400 hover:text-red-600 transition-colors px-2 py-1"
       >
-        삭제
+        ??��
       </button>
     </form>
   )

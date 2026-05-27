@@ -18,24 +18,24 @@ export default async function DashboardPage({
     <div>
       {error && (
         <p className="font-sans text-sm text-[#B22222] bg-red-50 border border-red-100 px-4 py-3 mb-6">
-          ?�류가 발생?�습?�다. ?�시 ?�도?�주?�요.
+          오류가 발생했습니다. 다시 시도해주세요.
         </p>
       )}
 
-      {/* ?�이???�태 ?��? */}
+      {/* 사이트 상태 토글 */}
       <section className="bg-white border border-gray-200 p-5 mb-8">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className={`w-2 h-2 rounded-full ${maintenance ? 'bg-amber-400' : 'bg-green-500'}`} />
               <h2 className="font-sans text-sm font-semibold text-gray-900">
-                ?�이???�태: {maintenance ? '준�?�? : '?�상 ?�영'}
+                사이트 상태: {maintenance ? '준비 중' : '정상 운영'}
               </h2>
             </div>
             <p className="font-sans text-xs text-gray-400">
               {maintenance
-                ? '?�재 방문?�에�?준�?�??�이지가 ?�시?�니??'
-                : '방문?��? ?�이?��? ?�상?�으�??�용?????�습?�다.'}
+                ? '현재 방문자에게 준비 중 페이지가 표시됩니다.'
+                : '방문자가 사이트를 정상적으로 이용할 수 있습니다.'}
             </p>
           </div>
           <form action={setMaintenanceMode}>
@@ -48,26 +48,28 @@ export default async function DashboardPage({
                   : 'bg-gray-800 text-white hover:bg-[#B22222]'
               }`}
             >
-              {maintenance ? '?�상 모드�??�환' : '준�?중으�??�환'}
+              {maintenance ? '정상 모드로 전환' : '준비 중으로 전환'}
             </button>
           </form>
         </div>
       </section>
 
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-serif font-bold text-2xl text-gray-900">?�젠??관�?/h1>
+        <h1 className="font-serif font-bold text-2xl text-gray-900">아젠다 관리</h1>
         <Link
           href="/admin/agenda/new"
           className="font-sans text-sm bg-gray-900 text-white px-4 py-2 hover:bg-[#B22222] transition-colors"
         >
-          + ???�젠??        </Link>
+          + 새 아젠다
+        </Link>
       </div>
 
       {agendas.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
-          <p className="font-sans text-sm mb-4">?�젠?��? ?�습?�다.</p>
+          <p className="font-sans text-sm mb-4">아젠다가 없습니다.</p>
           <Link href="/admin/agenda/new" className="font-sans text-sm text-gray-900 underline">
-            �?번째 ?�젠??만들�?          </Link>
+            첫 번째 아젠다 만들기
+          </Link>
         </div>
       ) : (
         <div className="space-y-2">
@@ -81,7 +83,7 @@ export default async function DashboardPage({
                 key={agenda.id}
                 className="flex items-center justify-between bg-white border border-gray-200 hover:border-gray-400 transition-colors group"
               >
-                {/* ?�집 링크 ?????�부�?차�? */}
+                {/* 편집 링크 — 행 대부분 차지 */}
                 <Link
                   href={`/admin/agenda/${agenda.id}`}
                   className="flex items-center gap-4 min-w-0 flex-1 px-5 py-4"
@@ -93,7 +95,7 @@ export default async function DashboardPage({
                         : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                     }`}
                   >
-                    {isPublished ? '게시?? : '초안'}
+                    {isPublished ? '게시됨' : '초안'}
                   </span>
                   <span className="font-sans text-xs text-gray-400 border border-gray-200 px-2 py-0.5 flex-shrink-0">
                     {agenda.category}
@@ -102,18 +104,19 @@ export default async function DashboardPage({
                   <div className="ml-auto flex items-center gap-4 flex-shrink-0">
                     <div className="flex gap-2">
                       <span className={`font-sans text-xs ${hasProgressive ? 'text-green-600' : 'text-red-400'}`}>
-                        진보 {hasProgressive ? '?? : '??}
+                        진보 {hasProgressive ? '✓' : '✕'}
                       </span>
                       <span className={`font-sans text-xs ${hasConservative ? 'text-green-600' : 'text-red-400'}`}>
-                        보수 {hasConservative ? '?? : '??}
+                        보수 {hasConservative ? '✓' : '✕'}
                       </span>
                     </div>
                     <span className="font-sans text-xs text-gray-400 group-hover:text-gray-700">
-                      ?�집 ??                    </span>
+                      편집 →
+                    </span>
                   </div>
                 </Link>
 
-                {/* ??�� 버튼 ??Link 바깥??분리 */}
+                {/* 삭제 버튼 — Link 바깥에 분리 */}
                 <div className="px-3 border-l border-gray-100">
                   <DeleteAgendaButton agendaId={agenda.id} agendaTitle={agenda.title} />
                 </div>

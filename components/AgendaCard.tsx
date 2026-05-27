@@ -2,10 +2,10 @@ import Link from 'next/link'
 import { Agenda } from '@/types'
 
 const categoryColor: Record<string, string> = {
-  ?�치: 'bg-gray-100 text-gray-700',
+  정치: 'bg-gray-100 text-gray-700',
   경제: 'bg-gray-100 text-gray-700',
-  ?�회: 'bg-gray-100 text-gray-700',
-  �?��: 'bg-gray-100 text-gray-700',
+  사회: 'bg-gray-100 text-gray-700',
+  국제: 'bg-gray-100 text-gray-700',
 }
 
 export default function AgendaCard({ agenda }: { agenda: Agenda }) {
@@ -23,7 +23,7 @@ export default function AgendaCard({ agenda }: { agenda: Agenda }) {
           >
             {agenda.category}
           </span>
-          <span className="text-xs text-gray-400 font-sans">{total}�?기사</span>
+          <span className="text-xs text-gray-400 font-sans">{total}개 기사</span>
         </div>
         <h2 className="font-serif font-bold text-gray-900 text-xl leading-snug mb-3 group-hover:text-[#B22222] transition-colors">
           {agenda.title}

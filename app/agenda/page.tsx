@@ -15,8 +15,8 @@ export default async function AgendaPage({
   ])
 
   const pageTitle =
-    initialView === 'progressive' ? '진보???�각' :
-    initialView === 'conservative' ? '보수???�각' : '?�젠??
+    initialView === 'progressive' ? '진보의 시각' :
+    initialView === 'conservative' ? '보수의 시각' : '아젠다'
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
@@ -24,14 +24,14 @@ export default async function AgendaPage({
         <h1 className="font-serif font-black text-4xl text-gray-900 mb-3">{pageTitle}</h1>
         <p className="font-sans text-gray-600">
           {initialView
-            ? `VIA MEDIA News??${pageTitle} 기사 모음?�니??`
-            : '?�재 VIA MEDIA News가 ?�루??주요 ?�제?�입?�다. �??�젠?�마??진보?� 보수???�각???�께 ?�어보세??'}
+            ? `VIA MEDIA News의 ${pageTitle} 기사 모음입니다.`
+            : '현재 VIA MEDIA News가 다루는 주요 의제들입니다. 각 아젠다마다 진보와 보수의 시각을 함께 읽어보세요.'}
         </p>
       </div>
 
       {agendas.length === 0 ? (
         <p className="font-sans text-gray-400 text-center py-20">
-          ?�직 게시???�젠?��? ?�습?�다.
+          아직 게시된 아젠다가 없습니다.
         </p>
       ) : (
         <AgendaPageClient agendas={agendas} articles={articles} initialView={initialView} />

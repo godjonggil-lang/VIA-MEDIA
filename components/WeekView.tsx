@@ -31,7 +31,7 @@ export default function WeekView({ items }: { items: ViewItem[] }) {
                     title={item.title}
                     url={item.url}
                     image={item.image}
-                    priority={si === 0}
+                    first={si === 0}
                   />
                 </li>
               ))}

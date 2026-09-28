@@ -1,24 +1,20 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextResponse } from 'next/server'
+import { listWeeks } from '@/lib/db'
 
-export const runtime = 'nodejs';
-
+// Vercel Cron 이 3일마다 호출 — Supabase 무료 플랜 자동 일시중지 방지 (vercel.json)
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const secret = process.env.CRON_SECRET
+  if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { error } = await supabase
-    .from('articles')
-    .select('id')
-    .limit(1);
-
-  if (error) {
-    console.error('[keepalive] Supabase ping failed:', error.message);
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  try {
+    await listWeeks()
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    console.error('[keepalive] Supabase ping failed:', message)
+    return NextResponse.json({ ok: false, error: message }, { status: 500 })
   }
 
-  console.log('[keepalive] Supabase ping OK');
-  return NextResponse.json({ ok: true, at: new Date().toISOString() });
+  return NextResponse.json({ ok: true, at: new Date().toISOString() })
 }

@@ -1,18 +1,22 @@
 {
-  "name": "via-media",
+  "name": "defensetoday-cardnews-hub",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "node --env-file=.env.local scripts/seed.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
+    "cheerio": "^1.2.0",
+    "iron-session": "^9.0.1",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

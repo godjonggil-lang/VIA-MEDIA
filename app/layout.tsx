@@ -1,31 +1,37 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import SiteShell from '@/components/SiteShell'
+import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/config'
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:3000')
 
 export const metadata: Metadata = {
-  title: 'VIA MEDIA News — Understand Before You Take a Side',
-  description: '진보와 보수의 시각을 건조하게 기록하는 독립 언론. 이해가 먼저, 입장은 그 다음입니다.',
+  metadataBase: new URL(siteUrl),
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  openGraph: { siteName: SITE_NAME, type: 'website', locale: 'ko_KR' },
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0D0D4D',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className="h-full">
+    <html lang="ko">
       <head>
-        {/* Noto fonts via Google — swap ensures system fonts show first */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap"
           rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-white text-gray-900">
-        <SiteShell>{children}</SiteShell>
-      </body>
+      <body className="min-h-dvh flex flex-col">{children}</body>
     </html>
   )
 }

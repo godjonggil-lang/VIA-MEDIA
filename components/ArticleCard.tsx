@@ -1,40 +1,41 @@
-import Link from 'next/link'
-import { Article } from '@/types'
-import PerspectiveBadge from './PerspectiveBadge'
-import { siteConfig } from '@/lib/data'
+import Image from 'next/image'
 
-const borderByPerspective = {
-  progressive: 'border-l-[#B22222]',
-  conservative: 'border-l-gray-800',
-  analysis: 'border-l-gray-300',
+type Props = {
+  title: string
+  url: string
+  image: string | null // 이미 프록시 경로로 변환된 주소
+  priority?: boolean
 }
 
-export default function ArticleCard({ article }: { article: Article }) {
-  const author =
-    article.author === 'publisher' ? siteConfig.publisher.name : siteConfig.editor.name
-
+// 모바일: 가로형(썸네일 + 제목) — 6건이 한 화면에 들어오도록
+// sm 이상: 세로형(사진 위, 제목 아래)
+export default function ArticleCard({ title, url, image, priority }: Props) {
   return (
-    <Link href={`/article/${article.slug}`} className="group block">
-      <article
-        className={`border border-gray-100 border-l-4 ${borderByPerspective[article.perspective]} bg-white p-5 h-full transition-shadow hover:shadow-md`}
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs text-[#B22222] font-sans font-medium tracking-wide uppercase">
-            {article.agenda}
-          </span>
-        </div>
-        <PerspectiveBadge perspective={article.perspective} />
-        <h2 className="font-serif font-bold text-gray-900 text-lg leading-snug mt-2 mb-2 group-hover:text-[#B22222] transition-colors">
-          {article.title}
-        </h2>
-        <p className="font-sans text-sm text-gray-600 leading-relaxed line-clamp-3">
-          {article.summary}
-        </p>
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-400 font-sans">
-          <span>{author}</span>
-          <time>{article.publishedAt}</time>
-        </div>
-      </article>
-    </Link>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex sm:flex-col gap-3 sm:gap-0 rounded-lg border border-navy/10 bg-white shadow-[0_1px_3px_rgba(13,13,77,0.06)] overflow-hidden p-2 sm:p-0 transition-colors hover:border-point focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-point"
+    >
+      <div className="relative aspect-video w-28 shrink-0 sm:w-full overflow-hidden rounded sm:rounded-none bg-navy/5">
+        {image ? (
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 112px"
+            className="object-cover"
+            priority={priority}
+          />
+        ) : (
+          <div className="absolute inset-0 grid place-items-center bg-navy text-[11px] font-semibold tracking-wide text-white/70">
+            DEFENSE TODAY
+          </div>
+        )}
+      </div>
+      <h3 className="self-center sm:self-auto text-[15px] leading-[1.35] font-semibold text-navy line-clamp-3 sm:line-clamp-2 sm:px-3.5 sm:py-3 group-hover:underline decoration-point underline-offset-2">
+        {title}
+      </h3>
+    </a>
   )
 }

@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getWeek, listWeeks } from '@/lib/db'
+import { getAllPosts, getAllWeekNotes, getPost } from '@/lib/db'
+import { listWeeklyReports } from '@/lib/report'
 import { isAdmin } from '@/lib/session'
-import { currentWeekInfo } from '@/lib/week'
+import { dateLabel, todaySeoul, weekOfDate } from '@/lib/week'
 import { SITE_NAME } from '@/lib/config'
+import CategoryTag from '@/components/CategoryTag'
 import { logout } from './actions'
 import Editor, { type EditorInitial } from './Editor'
 import DeleteButton from './DeleteButton'
+import WeekNoteForm from './WeekNoteForm'
 
 export const metadata: Metadata = { title: '관리자', robots: { index: false } }
 
@@ -16,26 +19,33 @@ export default async function AdminPage(props: PageProps<'/admin'>) {
 
   const { edit, saved } = await props.searchParams
   const editId = typeof edit === 'string' ? edit : null
-  const [weeks, editing] = await Promise.all([listWeeks(), editId ? getWeek(editId) : null])
+  const [posts, editing, reports, notes] = await Promise.all([
+    getAllPosts(),
+    editId ? getPost(editId) : null,
+    listWeeklyReports(),
+    getAllWeekNotes(),
+  ])
+  // 노트를 쓸 수 있는 주: 이번 주 + 게시물이 있는 주
+  const thisWeek = weekOfDate(todaySeoul())
+  const noteWeeks = [thisWeek, ...reports.map((r) => r.week).filter((w) => w.weekId !== thisWeek.weekId)].map((w) => ({
+    weekId: w.weekId,
+    label: `${w.weekId.slice(0, 4)}년 ${w.weekNo}주차 (${w.rangeLabel})${w.weekId === thisWeek.weekId ? ' · 이번 주' : ''}`,
+  }))
   if (editId && !editing) redirect('/admin')
 
-  let initial: EditorInitial
-  if (editing) {
-    initial = {
-      originalWeekId: editing.week_id,
-      weekId: editing.week_id,
-      rangeLabel: editing.range_label,
-      items: editing.items.map((i) => ({
-        section: i.section,
-        url: i.url,
-        title: i.title,
-        imageUrl: i.image_url ?? '',
-      })),
-    }
-  } else {
-    const w = currentWeekInfo()
-    initial = { originalWeekId: null, weekId: w.weekId, rangeLabel: w.rangeLabel, items: [] }
-  }
+  const initial: EditorInitial = editing
+    ? {
+        postId: editing.id,
+        date: editing.post_date,
+        topic: editing.topic ?? '',
+        items: editing.items.map((i) => ({
+          category: i.category,
+          url: i.url,
+          title: i.title,
+          imageUrl: i.image_url ?? '',
+        })),
+      }
+    : { postId: null, date: todaySeoul(), topic: '', items: [] }
 
   return (
     <>
@@ -58,32 +68,38 @@ export default async function AdminPage(props: PageProps<'/admin'>) {
       <main className="mx-auto w-full max-w-5xl px-4 py-6 space-y-10">
         {saved === '1' && editing && (
           <p role="status" className="rounded-md bg-news px-4 py-3 font-medium">
-            {editing.week_no}주차를 저장했습니다. 사이트에 바로 반영됩니다.
+            {dateLabel(editing.post_date)} 게시물을 저장했습니다. 사이트에 바로 반영됩니다.
           </p>
         )}
 
         <Editor key={editId ?? 'new'} initial={initial} />
 
+        <WeekNoteForm weeks={noteWeeks} notes={notes} />
+
         <section aria-labelledby="published">
-          <h2 id="published" className="text-lg font-bold">발행한 주차</h2>
-          {weeks.length === 0 ? (
+          <h2 id="published" className="text-lg font-bold">발행한 게시물</h2>
+          {posts.length === 0 ? (
             <p className="mt-3 text-sm text-body-dark">아직 없습니다.</p>
           ) : (
             <ul className="mt-3 divide-y divide-navy/10 rounded-lg border border-navy/10">
-              {weeks.map((w) => (
-                <li key={w.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-                  <span>
-                    <span className="font-semibold">{w.week_id}</span>
-                    <span className="ml-2 text-sm text-body-dark">{w.range_label}</span>
-                    {w.is_current && (
-                      <span className="ml-2 rounded bg-news px-1.5 py-0.5 text-xs font-semibold">이번 주</span>
-                    )}
-                  </span>
+              {posts.map((p) => (
+                <li key={p.id} className="flex flex-wrap items-start justify-between gap-2 px-4 py-3">
+                  <div className="min-w-0 flex-1">
+                    <span className="font-semibold tabular-nums">{p.post_date}</span>
+                    {[...new Set(p.items.map((i) => i.category))].map((c) => (
+                      <CategoryTag key={c} category={c} className="ml-2" />
+                    ))}
+                    <p className="mt-0.5 truncate text-sm text-body-dark">
+                      {p.topic ? `${p.topic} · ` : ''}
+                      {p.items[0]?.title}
+                      {p.items.length > 1 && ` 외 ${p.items.length - 1}건`}
+                    </p>
+                  </div>
                   <span className="flex items-center gap-3 text-sm">
-                    <Link href={`/admin?edit=${w.week_id}`} className="font-medium text-point-dark underline underline-offset-4">
+                    <Link href={`/admin?edit=${p.id}`} className="font-medium text-point-dark underline underline-offset-4">
                       수정
                     </Link>
-                    <DeleteButton weekId={w.week_id} />
+                    <DeleteButton postId={p.id} label={`${p.post_date} 게시물`} />
                   </span>
                 </li>
               ))}

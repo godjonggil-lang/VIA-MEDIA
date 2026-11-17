@@ -1,12 +1,14 @@
 import 'server-only'
 import * as cheerio from 'cheerio'
-import { parseAllowedUrl } from './config'
+import { COLUMN_SECTIONS, parseAllowedUrl, type Category } from './config'
 import { safeFetch } from './safe-fetch'
 
 export type ArticleMeta = {
   title: string
   image: string | null
   description: string | null
+  category: Category
+  section: string | null // 매체가 붙인 분류 (예: '국방∙안보', '오피니언')
   imageWarning?: string
 }
 
@@ -46,7 +48,12 @@ export async function fetchArticleMeta(articleUrl: string): Promise<ArticleMeta>
     else imageWarning = '대표 이미지가 허용 도메인 밖에 있어 제외했습니다. 이미지 주소를 직접 넣어 주세요.'
   }
 
-  return { title, image, description: meta('og:description') || null, imageWarning }
+  // 분류: <title> 이 '제목 < 오피니언 < 기사본문 - 디펜스투데이' 꼴 → 두 번째 칸
+  const parts = $('title').first().text().split(' < ').map((p) => p.trim())
+  const section = parts.length >= 3 ? parts[parts.length - 2] : null
+  const category: Category = section && COLUMN_SECTIONS.includes(section) ? 'column' : 'news'
+
+  return { title, image, description: meta('og:description') || null, category, section, imageWarning }
 }
 
 function escapeRegExp(s: string) {

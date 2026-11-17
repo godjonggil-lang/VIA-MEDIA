@@ -2,10 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { DOMAIN_ERROR, parseAllowedUrl, SECTIONS, type Section } from '@/lib/config'
-import { adminDb } from '@/lib/db'
+import { CATEGORIES, DOMAIN_ERROR, parseAllowedUrl, type Category } from '@/lib/config'
+import { adminDb, getPost } from '@/lib/db'
+import { revalidatePostPages, revalidateReport } from '@/lib/revalidate'
 import { checkPassword, getSession, isAdmin } from '@/lib/session'
-import { parseWeekId } from '@/lib/week'
+import { isValidDate, parseWeekId } from '@/lib/week'
 
 export async function login(_prev: string | null, formData: FormData): Promise<string | null> {
   const password = String(formData.get('password') ?? '')
@@ -25,69 +26,82 @@ export async function logout() {
   redirect('/admin/login')
 }
 
-export type PublishInput = {
-  originalWeekId: string | null // null = 새 발행
-  weekId: string
-  rangeLabel: string
-  items: { section: Section; title: string; url: string; imageUrl: string }[]
+export type SaveInput = {
+  postId: string | null // null = 새 게시물
+  date: string // 'YYYY-MM-DD'
+  topic: string
+  items: { category: Category; title: string; url: string; imageUrl: string }[]
 }
 
-export type ActionResult = { ok: true; weekId: string } | { ok: false; error: string }
+export type ActionResult = { ok: true; postId: string } | { ok: false; error: string }
 
-export async function publishWeek(input: PublishInput): Promise<ActionResult> {
-  if (!(await isAdmin())) return { ok: false, error: '로그인이 만료되었습니다. 다시 로그인해 주세요.' }
+const MAX_ITEMS = 10
+const EXPIRED = '로그인이 만료되었습니다. 다시 로그인해 주세요.'
 
-  const info = parseWeekId(input.weekId)
-  if (!info) return { ok: false, error: '주차 ID 형식이 올바르지 않습니다 (예: 2026-W39)' }
-  const rangeLabel = input.rangeLabel.trim()
-  if (!rangeLabel) return { ok: false, error: '기간 표기를 입력해 주세요' }
+export async function savePost(input: SaveInput): Promise<ActionResult> {
+  if (!(await isAdmin())) return { ok: false, error: EXPIRED }
+  if (!isValidDate(input.date)) return { ok: false, error: '날짜를 확인해 주세요' }
+  if (input.items.length < 1) return { ok: false, error: '기사를 1건 이상 넣어 주세요' }
+  if (input.items.length > MAX_ITEMS) return { ok: false, error: `기사는 ${MAX_ITEMS}건까지 넣을 수 있습니다` }
 
   const items = []
-  for (const s of SECTIONS) {
-    const list = input.items.filter((i) => i.section === s.key)
-    if (list.length !== 3) return { ok: false, error: `${s.label} 3건을 모두 채워 주세요` }
-    for (const [idx, it] of list.entries()) {
-      const n = `${s.label} ${idx + 1}번`
-      const url = parseAllowedUrl(it.url)
-      if (!url) return { ok: false, error: `${n}: ${DOMAIN_ERROR}` }
-      const title = it.title.trim()
-      if (!title) return { ok: false, error: `${n}: 제목이 비어 있습니다` }
-      const imageUrl = it.imageUrl.trim()
-      if (imageUrl && !parseAllowedUrl(imageUrl)) {
-        return { ok: false, error: `${n}: 이미지도 디펜스투데이 주소만 쓸 수 있습니다` }
-      }
-      items.push({ section: s.key, sort_order: idx + 1, title, url: url.toString(), image_url: imageUrl })
+  for (const [idx, it] of input.items.entries()) {
+    const n = `${idx + 1}번 기사`
+    const url = parseAllowedUrl(it.url)
+    if (!url) return { ok: false, error: `${n}: ${DOMAIN_ERROR}` }
+    const title = it.title.trim()
+    if (!title) return { ok: false, error: `${n}: 제목이 비어 있습니다` }
+    const imageUrl = it.imageUrl.trim()
+    if (imageUrl && !parseAllowedUrl(imageUrl)) {
+      return { ok: false, error: `${n}: 이미지도 디펜스투데이 주소만 쓸 수 있습니다` }
     }
+    if (!(it.category in CATEGORIES)) return { ok: false, error: `${n}: 분류가 올바르지 않습니다` }
+    items.push({ sort_order: idx + 1, category: it.category, title, url: url.toString(), image_url: imageUrl })
   }
 
-  const { error } = await adminDb().rpc('publish_week', {
-    p_week_id: info.weekId,
-    p_range_label: rangeLabel,
-    p_week_no: info.weekNo,
+  // 날짜를 바꾼 수정이면 예전 날짜의 주간 페이지도 갱신해야 한다
+  const before = input.postId ? await getPost(input.postId) : null
+
+  const { data, error } = await adminDb().rpc('save_post', {
+    p_post_date: input.date,
     p_items: items,
-    p_original_week_id: input.originalWeekId,
+    p_topic: input.topic.trim() || null,
+    p_post_id: input.postId,
   })
+  if (error) return { ok: false, error: `저장 실패: ${error.message}` }
+
+  revalidatePostPages([input.date, ...(before ? [before.post_date] : [])])
+  revalidatePath('/admin')
+  return { ok: true, postId: data as string }
+}
+
+export async function deletePost(postId: string): Promise<ActionResult> {
+  if (!(await isAdmin())) return { ok: false, error: EXPIRED }
+  const before = await getPost(postId)
+  const { error } = await adminDb().rpc('delete_post', { p_post_id: postId })
+  if (error) return { ok: false, error: `삭제 실패: ${error.message}` }
+  revalidatePostPages(before ? [before.post_date] : [])
+  revalidatePath('/admin')
+  return { ok: true, postId }
+}
+
+/** 주간 리포트 에디터 노트 저장. 비우면 삭제 */
+export async function saveWeekNote(weekId: string, note: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!(await isAdmin())) return { ok: false, error: EXPIRED }
+  const week = parseWeekId(weekId)
+  if (!week) return { ok: false, error: '주차 형식이 올바르지 않습니다 (예: 2026-W47)' }
+  const text = note.trim()
+  if (text.length > 600) return { ok: false, error: '노트는 600자까지 쓸 수 있습니다' }
+  const db = adminDb()
+  const { error } = text
+    ? await db.from('week_notes').upsert({ week_id: week.weekId, note: text, updated_at: new Date().toISOString() })
+    : await db.from('week_notes').delete().eq('week_id', week.weekId)
   if (error) {
-    if (error.message.includes('WEEK_EXISTS'))
-      return { ok: false, error: `${info.weekId} 는 이미 발행되었습니다. 아래 목록에서 '수정'을 눌러 주세요.` }
+    if (error.code === '42P01' || error.message.includes('week_notes'))
+      return { ok: false, error: '노트 표가 아직 없습니다. supabase/week-notes.sql 을 먼저 실행해 주세요.' }
     return { ok: false, error: `저장 실패: ${error.message}` }
   }
-
-  revalidateAll([info.weekId, input.originalWeekId])
-  return { ok: true, weekId: info.weekId }
-}
-
-export async function deleteWeek(weekId: string): Promise<ActionResult> {
-  if (!(await isAdmin())) return { ok: false, error: '로그인이 만료되었습니다. 다시 로그인해 주세요.' }
-  const { error } = await adminDb().rpc('delete_week', { p_week_id: weekId })
-  if (error) return { ok: false, error: `삭제 실패: ${error.message}` }
-  revalidateAll([weekId])
-  return { ok: true, weekId }
-}
-
-function revalidateAll(weekIds: (string | null)[]) {
-  revalidatePath('/')
-  revalidatePath('/archive')
-  for (const id of weekIds) if (id) revalidatePath(`/week/${id}`)
+  revalidateReport(week.weekId)
   revalidatePath('/admin')
+  return { ok: true }
 }

@@ -1,24 +1,7 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { getWeek } from '@/lib/db'
-import WeekPage, { weekMetadata } from '@/components/WeekPage'
+import { permanentRedirect } from 'next/navigation'
 
-export const revalidate = 3600
-
-// 빌드 때는 만들지 않고, 첫 방문 시 생성 후 캐시
-export function generateStaticParams() {
-  return []
-}
-
-export async function generateMetadata(props: PageProps<'/week/[weekId]'>): Promise<Metadata> {
-  const { weekId } = await props.params
-  const week = await getWeek(decodeURIComponent(weekId))
-  return weekMetadata(week, week ? `${week.week_no}주차 (${week.range_label})` : undefined)
-}
-
+// 예전 주간 주소(/week/2026-W40) → 주간 리포트(/report/2026-W40)
 export default async function Page(props: PageProps<'/week/[weekId]'>) {
   const { weekId } = await props.params
-  const week = await getWeek(decodeURIComponent(weekId))
-  if (!week) notFound()
-  return <WeekPage week={week} />
+  permanentRedirect(`/report/${encodeURIComponent(decodeURIComponent(weekId))}`)
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { listWeeks } from '@/lib/db'
+import { pingDb } from '@/lib/db'
 
 // Vercel Cron 이 3일마다 호출 — Supabase 무료 플랜 자동 일시중지 방지 (vercel.json)
 export async function GET(request: Request) {
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    await listWeeks()
+    await pingDb()
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     console.error('[keepalive] Supabase ping failed:', message)

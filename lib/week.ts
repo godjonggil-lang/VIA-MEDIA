@@ -1,19 +1,49 @@
-// ISO 주차 계산 (한국 시간 기준)
+// 날짜·ISO 주차 계산 (한국 시간 기준). 날짜는 'YYYY-MM-DD' 문자열로 주고받는다.
 
 const pad = (n: number) => String(n).padStart(2, '0')
+const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
-/** 한국 시간 기준 오늘 날짜를 UTC 자정 Date 로 */
-function todayInSeoul(now = new Date()): Date {
-  const [y, m, d] = new Intl.DateTimeFormat('en-CA', {
+const toIso = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`
+const fromIso = (s: string) => {
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d))
+}
+
+/** 한국 시간 기준 오늘 'YYYY-MM-DD' */
+export function todaySeoul(now = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Seoul',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  })
-    .format(now)
-    .split('-')
-    .map(Number)
-  return new Date(Date.UTC(y, m - 1, d))
+  }).format(now)
+}
+
+export function addDays(date: string, days: number): string {
+  const d = fromIso(date)
+  d.setUTCDate(d.getUTCDate() + days)
+  return toIso(d)
+}
+
+export function isValidDate(s: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) && toIso(fromIso(s)) === s
+}
+
+/** '2026-11-17' → '11.17 (화)' */
+export function dateLabel(date: string): string {
+  const d = fromIso(date)
+  return `${d.getUTCMonth() + 1}.${pad(d.getUTCDate())} (${WEEKDAYS[d.getUTCDay()]})`
+}
+
+/** '2026-11-17' → '11.17(화)' (공백 없는 짧은 꼴) */
+export function shortDateLabel(date: string): string {
+  return dateLabel(date).replace(' ', '')
+}
+
+/** '2026-11-17' → '2026년 11월' */
+export function monthLabel(date: string): string {
+  const d = fromIso(date)
+  return `${d.getUTCFullYear()}년 ${d.getUTCMonth() + 1}월`
 }
 
 /** ISO 주차의 월요일 (UTC 자정) */
@@ -34,20 +64,27 @@ function isoWeekOf(date: Date): { year: number; week: number } {
   return { year, week }
 }
 
-export type WeekInfo = { weekId: string; weekNo: number; rangeLabel: string }
+export type WeekInfo = {
+  weekId: string
+  weekNo: number
+  rangeLabel: string // '2026. 10. 26 - 10. 30' (월~금)
+  from: string // 월요일
+  to: string // 일요일
+}
 
-export function weekInfo(year: number, week: number): WeekInfo {
+function weekInfo(year: number, week: number): WeekInfo {
   const mon = mondayOf(year, week)
-  const fri = new Date(mon)
-  fri.setUTCDate(mon.getUTCDate() + 4)
+  const from = toIso(mon)
+  const fri = fromIso(addDays(from, 4))
   const rangeLabel =
     `${mon.getUTCFullYear()}. ${pad(mon.getUTCMonth() + 1)}. ${pad(mon.getUTCDate())}` +
     ` - ${pad(fri.getUTCMonth() + 1)}. ${pad(fri.getUTCDate())}`
-  return { weekId: `${year}-W${pad(week)}`, weekNo: week, rangeLabel }
+  return { weekId: `${year}-W${pad(week)}`, weekNo: week, rangeLabel, from, to: addDays(from, 6) }
 }
 
-export function currentWeekInfo(now = new Date()): WeekInfo {
-  const { year, week } = isoWeekOf(todayInSeoul(now))
+/** 'YYYY-MM-DD' 가 속한 ISO 주차 */
+export function weekOfDate(date: string): WeekInfo {
+  const { year, week } = isoWeekOf(fromIso(date))
   return weekInfo(year, week)
 }
 

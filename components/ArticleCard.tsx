@@ -10,23 +10,22 @@ type Props = {
   first?: boolean // 맨 위 게시물: 우선순위 높임
 }
 
-// 모바일: 가로형(썸네일 + 제목) — 여러 건이 한 화면에 들어오도록
-// sm 이상: 세로형(사진 위, 제목 아래)
+// 모든 화면에서 가로형(왼쪽 사진 + 오른쪽 제목). PC 에서는 사진만 조금 키운다
 export default function ArticleCard({ title, url, image, tag, first }: Props) {
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex sm:flex-col gap-3 sm:gap-0 p-2 sm:p-0 h-full rounded-lg border border-navy/10 bg-white shadow-[0_1px_3px_rgba(13,13,77,0.06)] overflow-hidden transition-colors hover:border-point focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-point`}
+      className={`group flex items-center gap-3 sm:gap-4 p-2 sm:p-2.5 h-full rounded-lg border border-navy/10 bg-white shadow-[0_1px_3px_rgba(13,13,77,0.06)] overflow-hidden transition-colors hover:border-point focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-point`}
     >
-      <div className="relative aspect-video w-28 shrink-0 overflow-hidden rounded bg-navy/5 sm:w-full sm:rounded-none">
+      <div className="relative aspect-video w-28 sm:w-40 shrink-0 overflow-hidden rounded bg-navy/5">
         {image ? (
           <Image
             src={image}
             alt=""
             fill
-            sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 112px"
+            sizes="(min-width: 640px) 160px, 112px"
             className="object-cover"
             loading="eager" // 상단 게시물은 첫 화면에 보이므로 지연 로딩하지 않음
             fetchPriority={first ? 'high' : 'auto'}
@@ -37,9 +36,9 @@ export default function ArticleCard({ title, url, image, tag, first }: Props) {
           </div>
         )}
       </div>
-      <div className="self-center sm:self-auto sm:px-3.5 sm:py-3">
+      <div className="min-w-0">
         {tag && <CategoryTag category={tag} className="mb-1" />}
-        <h3 className="text-[15px] leading-[1.35] font-semibold text-navy line-clamp-3 sm:line-clamp-2 group-hover:underline decoration-point underline-offset-2">
+        <h3 className="text-[15px] sm:text-base leading-[1.35] font-semibold text-navy line-clamp-3 group-hover:underline decoration-point underline-offset-2">
           {title}
         </h3>
       </div>

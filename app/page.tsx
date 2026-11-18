@@ -14,9 +14,10 @@ export default async function Home() {
     <PostsPage
       posts={await getRecentPosts()}
       subtitle="인스타그램 카드뉴스 원문 · 최근 7일"
+      subtitleEn="Instagram card news sources · Last 7 days"
       active="home"
       markNewest
-      emptyText="카드뉴스를 준비 중입니다"
+      emptyText="카드뉴스를 준비 중입니다 · Coming soon"
     />
   )
 }

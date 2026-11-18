@@ -32,15 +32,16 @@ export function postsMetadata(posts: Post[], title?: string, description = SITE_
 type Props = {
   posts: Post[]
   subtitle?: string
+  subtitleEn?: string
   active: Tab
   markNewest?: boolean
   emptyText: string
 }
 
-export default function PostsPage({ posts, subtitle, active, markNewest, emptyText }: Props) {
+export default function PostsPage({ posts, subtitle, subtitleEn, active, markNewest, emptyText }: Props) {
   return (
     <>
-      <SiteHeader subtitle={subtitle} active={active} />
+      <SiteHeader subtitle={subtitle} subtitleEn={subtitleEn} active={active} />
       <main className="mx-auto w-full max-w-5xl px-4 py-3 sm:py-8">
         {posts.length > 0 ? (
           <PostList posts={toViewPosts(posts)} markNewest={markNewest} />
@@ -51,7 +52,7 @@ export default function PostsPage({ posts, subtitle, active, markNewest, emptyTe
               href="/monthly"
               className="mt-4 inline-block rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy/90"
             >
-              월간 리포트 보기
+              월간 리포트 보기 · Monthly Report
             </Link>
           </div>
         )}

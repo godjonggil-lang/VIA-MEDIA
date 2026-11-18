@@ -1,4 +1,5 @@
 export const SITE_NAME = '디펜스투데이 카드뉴스 HUB'
+export const SITE_NAME_EN = 'DEFENSE TODAY Card News HUB'
 export const SITE_DESCRIPTION =
   '디펜스투데이 인스타그램 카드뉴스 원문 모음 — 국방안보 뉴스와 안보 칼럼'
 
@@ -30,8 +31,8 @@ export function parseAllowedUrl(input: string): URL | null {
 
 // 기사 분류 꼬리표. 색은 인스타 카드뉴스 탭 색과 맞춤
 export const CATEGORIES = {
-  news: { label: '뉴스', accent: 'bg-news' },
-  column: { label: '칼럼', accent: 'bg-column' },
+  news: { label: '뉴스', en: 'News', accent: 'bg-news' },
+  column: { label: '칼럼', en: 'Column', accent: 'bg-column' },
 } as const
 
 export type Category = keyof typeof CATEGORIES

@@ -4,7 +4,7 @@ export default function CategoryTag({ category, className = '' }: { category: Ca
   const c = CATEGORIES[category]
   return (
     <span className={`${c.accent} inline-block rounded px-1.5 py-px text-xs font-bold text-navy ${className}`}>
-      {c.label}
+      {c.label} <span className="font-semibold opacity-70">{c.en}</span>
     </span>
   )
 }

@@ -8,7 +8,9 @@
 | `/` | 최근 7일 게시물 (최신순, 맨 위에 NEW) |
 | `/report` | 디펜스투데이 주간 리포트 (DEFENSE TODAY Weekly Report) 목록 |
 | `/report/2026-W46` | 그 주(월~일) 리포트: 표지·일자별 보도. 링크를 보내면 미리보기 이미지가 자동으로 붙음 |
-| `/archive` | 이전 카드뉴스 (월별 목록) |
+| `/monthly` | 디펜스투데이 월간 리포트 (DEFENSE TODAY Monthly Report) 목록 |
+| `/monthly/2026-11` | 그 달 리포트: 표지·주차별 보도(각 주차에서 주간 리포트로 이동). 미리보기 이미지 자동 |
+| `/archive` | 예전 주소. `/monthly` 로 자동 연결 |
 | `/week/2026-W46` | 예전 주소. `/report/2026-W46` 으로 자동 연결 |
 | `/admin` | 관리자 (발행·수정·삭제) |
 
@@ -128,7 +130,8 @@ npm run dev
   `ADMIN_PASSWORD`+`SUPABASE_SERVICE_ROLE_KEY` 로부터 유도
 - `supabase/migrate-posts.sql` — 게시물 표(`posts`, `post_items`), RLS(공개 읽기만), 저장/삭제 함수.
   예전 주간 표(`weeks`, `items`, `supabase/schema.sql`)는 기록용으로 남아 있고 화면에서는 쓰지 않음
-- `lib/report.ts`, `app/report/` — 주간 리포트. `opengraph-image.tsx` 가 공유 미리보기 이미지를 만든다
+- `lib/report.ts`, `app/report/`, `app/monthly/` — 주간·월간 리포트. 표지는 `components/ReportCover.tsx`,
+  공유 미리보기 이미지는 `lib/report-og.tsx` 를 함께 쓴다
   (한글 글꼴은 jsDelivr 의 Pretendard 서브셋을 런타임에 받아 씀)
 - `scripts/publish.mjs` — 터미널 발행. 저장 후 `/api/revalidate`(service role 키에서 유도한 토큰)로 페이지 즉시 갱신
 - 메인·아카이브는 ISR(10분) + 발행 시 `revalidatePath` 로 즉시 갱신

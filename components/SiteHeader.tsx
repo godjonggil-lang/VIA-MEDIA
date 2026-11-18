@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { SITE_NAME } from '@/lib/config'
 
-export type Tab = 'home' | 'report' | 'archive'
+export type Tab = 'home' | 'report' | 'monthly'
 
 const TABS: { key: Tab; href: string; label: string }[] = [
   { key: 'home', href: '/', label: '최신' },
   { key: 'report', href: '/report', label: '주간 리포트' },
-  { key: 'archive', href: '/archive', label: '이전 카드뉴스' },
+  { key: 'monthly', href: '/monthly', label: '월간 리포트' },
 ]
 
 type Props = {

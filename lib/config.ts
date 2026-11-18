@@ -42,6 +42,8 @@ export const COLUMN_SECTIONS = ['오피니언', '밀리터리+']
 // 주간 리포트 이름 (국문 + 영문 병기)
 export const REPORT_NAME = '디펜스투데이 주간 리포트'
 export const REPORT_NAME_EN = 'DEFENSE TODAY Weekly Report'
+export const MONTHLY_NAME = '디펜스투데이 월간 리포트'
+export const MONTHLY_NAME_EN = 'DEFENSE TODAY Monthly Report'
 
 // 메인에 보여줄 기간(일)
 export const RECENT_DAYS = 7

@@ -46,6 +46,33 @@ export function monthLabel(date: string): string {
   return `${d.getUTCFullYear()}년 ${d.getUTCMonth() + 1}월`
 }
 
+export type MonthInfo = {
+  monthId: string // '2026-11'
+  year: number
+  month: number
+  from: string // 1일
+  to: string // 말일
+}
+
+function monthInfo(year: number, month: number): MonthInfo {
+  const from = `${year}-${pad(month)}-01`
+  const to = toIso(new Date(Date.UTC(year, month, 0)))
+  return { monthId: `${year}-${pad(month)}`, year, month, from, to }
+}
+
+export function monthOfDate(date: string): MonthInfo {
+  const [y, m] = date.split('-').map(Number)
+  return monthInfo(y, m)
+}
+
+/** "2026-11" → MonthInfo. 형식이 틀리면 null */
+export function parseMonthId(monthId: string): MonthInfo | null {
+  const m = /^(\d{4})-(\d{2})$/.exec(monthId.trim())
+  if (!m) return null
+  const month = Number(m[2])
+  return month >= 1 && month <= 12 ? monthInfo(Number(m[1]), month) : null
+}
+
 /** ISO 주차의 월요일 (UTC 자정) */
 function mondayOf(year: number, week: number): Date {
   const jan4 = new Date(Date.UTC(year, 0, 4))

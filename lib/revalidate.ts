@@ -1,14 +1,18 @@
 import 'server-only'
 import { createHash, timingSafeEqual } from 'node:crypto'
 import { revalidatePath } from 'next/cache'
-import { weekOfDate } from './week'
+import { monthOfDate, weekOfDate } from './week'
 
 /** 게시물 저장·삭제 후 다시 그려야 할 공개 페이지 */
 export function revalidatePostPages(dates: string[]) {
   revalidatePath('/')
-  revalidatePath('/archive')
   revalidatePath('/report')
-  for (const d of new Set(dates)) revalidateReport(weekOfDate(d).weekId)
+  revalidatePath('/monthly')
+  for (const d of new Set(dates)) {
+    revalidateReport(weekOfDate(d).weekId)
+    revalidatePath(`/monthly/${monthOfDate(d).monthId}`)
+    revalidatePath(`/monthly/${monthOfDate(d).monthId}/opengraph-image`)
+  }
 }
 
 export function revalidateReport(weekId: string) {

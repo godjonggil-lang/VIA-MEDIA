@@ -48,10 +48,10 @@ export default function PostsPage({ posts, subtitle, active, markNewest, emptyTe
           <div className="py-16 text-center">
             <p className="text-lg font-bold">{emptyText}</p>
             <Link
-              href="/archive"
+              href="/monthly"
               className="mt-4 inline-block rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy/90"
             >
-              이전 카드뉴스 보기
+              월간 리포트 보기
             </Link>
           </div>
         )}
